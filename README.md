@@ -232,7 +232,7 @@ apply、call、bind 这些 API 的`this` 取决于第一个参数，如果第一
 
 ##### this 的规则
 
-![chp101](C:\Users\ChenYun\Desktop\笔记\chp101.png)
+![chp101](\chp101.png)
 
 ### JS 基础知识点（二）
 
