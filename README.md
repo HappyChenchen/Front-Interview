@@ -1,5 +1,79 @@
-# Front-Interview
-## 前端面试知识点整理
+<!-- TOC -->
+
+- [JS 基础知识点（一）](#js-基础知识点一)
+  - [原始（Primitive）类型](#原始primitive类型)
+  - [对象（Object）类型](#对象object类型)
+  - [typeof vs instanceof](#typeof-vs-instanceof)
+    - [typeof](#typeof)
+    - [instanceof](#instanceof)
+  - [类型转换(记忆)](#类型转换记忆)
+    - [转换为布尔值、字符、数字](#转换为布尔值字符数字)
+    - [转 Boolean](#转-boolean)
+    - [对象转原始类型](#对象转原始类型)
+    - [四则运算符](#四则运算符)
+  - [this](#this)
+    - [案例：](#案例)
+    - [箭头函数中的 `this`](#箭头函数中的-this)
+    - [改变上下文的 API](#改变上下文的-api)
+    - [this 的规则](#this-的规则)
+- [JS 基础知识点（二）](#js-基础知识点二)
+  - [== vs ===](#-vs-)
+    - [==（记忆）](#记忆)
+    - [===](#)
+  - [闭包](#闭包)
+  - [深浅拷贝](#深浅拷贝)
+    - [浅拷贝](#浅拷贝)
+    - [深拷贝（记忆）](#深拷贝记忆)
+  - [原型](#原型)
+    - [原型](#原型-1)
+    - [原型链](#原型链)
+- [ES6 知识点](#es6-知识点)
+  - [var、let 及 const 区别](#varlet-及-const-区别)
+  - [原型继承和 Class 继承](#原型继承和-class-继承)
+    - [class](#class)
+    - [组合继承](#组合继承)
+    - [寄生组合继承](#寄生组合继承)
+    - [Class 继承](#class-继承)
+  - [模块化](#模块化)
+    - [立即执行函数](#立即执行函数)
+    - [AMD 和 CMD](#amd-和-cmd)
+    - [CommonJS](#commonjs)
+      - [require:(再看一下)](#require再看一下)
+  - [ES Module](#es-module)
+  - [Proxy(再看一下)](#proxy再看一下)
+  - [map, filter, reduce(再看一下)](#map-filter-reduce再看一下)
+    - [map](#map)
+    - [filter](#filter)
+    - [reduce](#reduce)
+    - [数组常用方法分析](#数组常用方法分析)
+- [JS 异步编程（需要补充看）](#js-异步编程需要补充看)
+  - [并发（concurrency）和并行（parallelism）区别](#并发concurrency和并行parallelism区别)
+  - [回调函数（Callback）](#回调函数callback)
+  - [Generator(需要补充)](#generator需要补充)
+  - [Promise(再看一下)](#promise再看一下)
+  - [async 及 await(需要补充)](#async-及-await需要补充)
+  - [常用定时器函数](#常用定时器函数)
+    - [setTimeout](#settimeout)
+    - [setInterval](#setinterval)
+    - [requestAnimationFrame](#requestanimationframe)
+- [手写 Promise](#手写-promise)
+- [Vue 常考基础知识点](#vue-常考基础知识点)
+  - [生命周期钩子函数（8 个生命周期、keep-alive）](#生命周期钩子函数8-个生命周期keep-alive)
+  - [组件通信](#组件通信)
+  - [extend 能做什么](#extend-能做什么)
+  - [mixin 和 mixins 区别](#mixin-和-mixins-区别)
+  - [computed 和 watch 区别](#computed-和-watch-区别)
+  - [keep-alive 组件有什么作用](#keep-alive-组件有什么作用)
+  - [v-show 与 v-if 区别](#v-show-与-v-if-区别)
+  - [组件中 data 什么时候可以使用对象](#组件中-data-什么时候可以使用对象)
+- [Vue 常考进阶知识点](#vue-常考进阶知识点)
+- [响应式原理](#响应式原理)
+  - [Object.defineProperty 的缺陷](#objectdefineproperty-的缺陷)
+  - [编译过程](#编译过程)
+  - [NextTick 原理分析](#nexttick-原理分析)
+- [监控](#监控)
+
+<!-- /TOC -->
 
 ### JS 基础知识点（一）
 
@@ -9,93 +83,104 @@
 
 - boolean
 - null  
-typeof null 会输出 object，但是这只是 JS 存在的一个悠久 Bug。在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象，然而 null 表示为全零，所以将它错误的判断为 object
+  typeof null 会输出 object，但是这只是 JS 存在的一个悠久 Bug。在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象，然而 null 表示为全零，所以将它错误的判断为 object
 - undefined
-- number   
-0.1 + 0.2 !== 0.3  
-双精度浮点数
+- number  
+  0.1 + 0.2 !== 0.3  
+  双精度浮点数
 - string
 - symbol
+
 #### 对象（Object）类型
 
->  对象类型和原始类型的不同之处？函数参数是对象会发生什么问题？
+> 对象类型和原始类型的不同之处？函数参数是对象会发生什么问题？
 
 对象类型和原始类型不同的是，原始类型存储的是值，对象类型存储的是地址（指针）。
+
 #### typeof vs instanceof
 
->  typeof 是否能正确判断类型？instanceof 能正确判断对象的原理是什么？
+> typeof 是否能正确判断类型？instanceof 能正确判断对象的原理是什么？
 
-##### typeof 
-  - typeof 对于原始类型来说，除了 null 都可以显示正确的类型
+##### typeof
 
-  - typeof 对于对象来说，除了函数都会显示 object，所以说 typeof 并不能准确判断变量到底是什么类型
+- typeof 对于原始类型来说，除了 null 都可以显示正确的类型
+
+- typeof 对于对象来说，除了函数都会显示 object，所以说 typeof 并不能准确判断变量到底是什么类型
 
 ##### instanceof
 
-  - 判断一个对象的正确类型，这时候可以考虑使用 instanceof，因为内部机制是通过原型链来判断的
+- 判断一个对象的正确类型，这时候可以考虑使用 instanceof，因为内部机制是通过原型链来判断的
 
-  - 对于原始类型来说，你想直接通过 instanceof 来判断类型是不行的，当然我们还是有办法让 instanceof 判断原始类型的。
-  ```
-  class PrimitiveString {
-      static [Symbol.hasInstance](x) {
-        return typeof x === 'string'
-      }
-  }
-  console.log('hello world' instanceof PrimitiveString) // true
-  //Symbol.hasInstance 能让我们自定义 instanceof 行为
-  ```
-  - 所以：instanceof 也不是百分之百可信的。
-####  类型转换(记忆)
+- 对于原始类型来说，你想直接通过 instanceof 来判断类型是不行的，当然我们还是有办法让 instanceof 判断原始类型的。
+
+```
+class PrimitiveString {
+    static [Symbol.hasInstance](x) {
+      return typeof x === 'string'
+    }
+}
+console.log('hello world' instanceof PrimitiveString) // true
+//Symbol.hasInstance 能让我们自定义 instanceof 行为
+```
+
+- 所以：instanceof 也不是百分之百可信的。
+
+#### 类型转换(记忆)
 
 > 该知识点常在笔试题中见到，熟悉了转换规则就不惧怕此类题目了。
 
 ##### 转换为布尔值、字符、数字
 
-| 原始值              | 转换类型 | 结果                                             |
-| ------------------- | -------- | ------------------------------------------------ |
-| number              | 布尔值   | 除了0，-0，NaN都是true                           |
-| string              | 布尔值   | 除了空串都是true                                 |
-| undefined null      | 布尔值   | false                                            |
-| 引用类型            | 布尔值   | true                                             |
-| number              | 字符串   | 5 => "5"                                         |
-| Boolean,函数,Symbol | 字符串   | true                                             |
-| 数组                | 字符串   | [1,2] => 1,2                                     |
-| 对象                | 字符串   | '[object Object]'                                |
-| string              | 数字     | '1'=>1 'a'=>NaN                                  |
-| 数组                | 数字     | 空数组为0，存在一个元素且为数字是数字，其他为NaN |
-| null                | 数字     | 0                                                |
-| 除了数组的引用类型  | 数字     | NaN                                              |
-| Symbol              | 数字     | 抛错                                             |
+| 原始值              | 转换类型 | 结果                                               |
+| ------------------- | -------- | -------------------------------------------------- |
+| number              | 布尔值   | 除了 0，-0，NaN 都是 true                          |
+| string              | 布尔值   | 除了空串都是 true                                  |
+| undefined null      | 布尔值   | false                                              |
+| 引用类型            | 布尔值   | true                                               |
+| number              | 字符串   | 5 => "5"                                           |
+| Boolean,函数,Symbol | 字符串   | true                                               |
+| 数组                | 字符串   | [1,2] => 1,2                                       |
+| 对象                | 字符串   | '[object Object]'                                  |
+| string              | 数字     | '1'=>1 'a'=>NaN                                    |
+| 数组                | 数字     | 空数组为 0，存在一个元素且为数字是数字，其他为 NaN |
+| null                | 数字     | 0                                                  |
+| 除了数组的引用类型  | 数字     | NaN                                                |
+| Symbol              | 数字     | 抛错                                               |
+
 注：Boolean 转字符串这行结果我指的是 true 转字符串的例子，不是说 Boolean、函数、Symblo 转字符串都是 `true`
-##### 转Boolean
-除了undefined， null， false， NaN， ''， 0， -0，其他所有值都转为 true，包括所有对象。
+
+##### 转 Boolean
+
+除了 undefined， null， false， NaN， ''， 0， -0，其他所有值都转为 true，包括所有对象。
 
 ##### 对象转原始类型
+
 对象在转换类型的时候，会调用内置的 [[ToPrimitive]] 函数，对于该函数来说，算法逻辑一般来说如下：
 
-  - 如果已经是原始类型了，那就不需要转换了
-  - 如果需要转字符串类型就调用 x.toString()，转换为基础类型的话就返回转换的值。不是字符串类型的话就先调用 valueOf，结果不是基础类型的话再调用 toString
-  - 调用 x.valueOf()，如果转换为基础类型，就返回转换的值
-  - 如果都没有返回原始类型，就会报错
+- 如果已经是原始类型了，那就不需要转换了
+- 如果需要转字符串类型就调用 x.toString()，转换为基础类型的话就返回转换的值。不是字符串类型的话就先调用 valueOf，结果不是基础类型的话再调用 toString
+- 调用 x.valueOf()，如果转换为基础类型，就返回转换的值
+- 如果都没有返回原始类型，就会报错
 
-##### 四则运算符  
+##### 四则运算符
+
 - 加法运算符不同于其他几个运算符，它有以下几个特点：
-    - 运算中其中一方为字符串，那么就会把另一方也转换为字符串
-    - 如果一方不是字符串或者数字，那么会将它转换为数字或者字符串
-        ```
-        1 + '1' // '11'
-        true + true // 2
-        4 + [1,2,3] // "41,2,3"
-        ```
+  - 运算中其中一方为字符串，那么就会把另一方也转换为字符串
+  - 如果一方不是字符串或者数字，那么会将它转换为数字或者字符串
+    ```
+    1 + '1' // '11'
+    true + true // 2
+    4 + [1,2,3] // "41,2,3"
+    ```
 - 对于除了加法的运算符来说，只要其中一方是数字，那么另一方就会被转为数字。
-    ```
-    4 * '3' // 12
-    4 * [] // 0
-    4 * [1, 2] // NaN
-    ```
+  ```
+  4 * '3' // 12
+  4 * [] // 0
+  4 * [1, 2] // NaN
+  ```
 - 比较运算符
-    -  如果是对象，就通过 toPrimitive 转换对象
-    -  如果是字符串，就通过 unicode 字符索引来比较
+  - 如果是对象，就通过 toPrimitive 转换对象
+  - 如果是字符串，就通过 unicode 字符索引来比较
 
 #### this
 
@@ -139,19 +224,17 @@ console.log(a()()()) //window
 
 首先箭头函数其实是没有 `this` 的，箭头函数中的 `this` 只取决**包裹箭头函数的第一个普通函数的 `this`**。在这个例子中，因为包裹箭头函数的第一个普通函数是 `a`，所以此时的 `this` 是 `window`。另外对箭头函数使用 `bind` 这类函数是无效的。
 
-##### 改变上下文的API
+##### 改变上下文的 API
 
-apply、call、bind这些API的`this` 取决于第一个参数，如果第一个参数为空，那么就是 `window`。
+apply、call、bind 这些 API 的`this` 取决于第一个参数，如果第一个参数为空，那么就是 `window`。
 
 如果对一个函数进行多次 `bind`，`this` 永远由第一次 `bind` 决定。
 
-##### this的规则
+##### this 的规则
 
 ![chp101](C:\Users\ChenYun\Desktop\笔记\chp101.png)
 
-
-
-###  JS 基础知识点（二）
+### JS 基础知识点（二）
 
 #### == vs ===
 
@@ -166,11 +249,11 @@ apply、call、bind这些API的`this` 取决于第一个参数，如果第一个
 5. 判断其中一方是否为 `boolean`，是的话就会把 `boolean` 转为 `number` 再进行判断
 6. 判断其中一方是否为 `object` 且另一方为 `string`、`number` 或者 `symbol`，是的话就会把 `object` 转为原始类型再进行判断
 
-#####  ===
+##### ===
 
 判断两者类型和值是否相同
 
-####  闭包
+#### 闭包
 
 > 什么是闭包？
 
@@ -254,20 +337,19 @@ for (let i = 1; i <= 5; i++) {
    a.age = 2
    console.log(b.age) // 1
 ```
+
 2. 通过展开运算符 `...` 来实现浅拷贝
 
- ```
-   let a = {
-     age: 1
-   }
-   let b = { ...a }
-   a.age = 2
-   console.log(b.age) // 1
- ```
+```
+  let a = {
+    age: 1
+  }
+  let b = { ...a }
+  a.age = 2
+  console.log(b.age) // 1
+```
 
 浅拷贝只解决了第一层的问题，如果接下去的值中还有对象的话，那么就又回到最开始的话题了，两者享有相同的地址。要解决这个问题，我们就得使用深拷贝了。
-
-
 
 ##### 深拷贝（记忆）
 
@@ -292,33 +374,31 @@ for (let i = 1; i <= 5; i++) {
    - 不能序列化函数
    - 不能解决循环引用的对象
 
-    但是在通常情况下，复杂数据都是可以序列化的，所以这个函数可以解决大部分问题。
+   但是在通常情况下，复杂数据都是可以序列化的，所以这个函数可以解决大部分问题。
 
    如果你所需拷贝的对象含有内置类型并且不包含函数，可以使用 `MessageChannel`
 
-   
-
-2. 自己想实现一个深拷贝，但是其实实现一个深拷贝是很困难的，需要我们考虑好多种边界情况，比如原型链如何处理、DOM 如何处理等等，所以这里我们实现的深拷贝只是简易版，更推荐使用 [lodash 的深拷贝函数](https://link.juejin.im/?target=https%3A%2F%2Flodash.com%2Fdocs%23cloneDeep)。
+2) 自己想实现一个深拷贝，但是其实实现一个深拷贝是很困难的，需要我们考虑好多种边界情况，比如原型链如何处理、DOM 如何处理等等，所以这里我们实现的深拷贝只是简易版，更推荐使用 [lodash 的深拷贝函数](https://link.juejin.im/?target=https%3A%2F%2Flodash.com%2Fdocs%23cloneDeep)。
 
    ```
    function deepClone(obj) {
      function isObject(o) {
        return (typeof o === 'object' || typeof o === 'function') && o !== null
      }
-   
+
      if (!isObject(obj)) {
        throw new Error('非对象')
      }
-   
+
      let isArray = Array.isArray(obj)
      let newObj = isArray ? [...obj] : { ...obj }
      Reflect.ownKeys(newObj).forEach(key => {
        newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key]
      })
-   
+
      return newObj
    }
-   
+
    let obj = {
      a: [1, 2, 3],
      b: {
@@ -331,17 +411,15 @@ for (let i = 1; i <= 5; i++) {
    console.log(obj.b.c) // 2
    ```
 
-
-
 #### 原型
 
->  如何理解原型？如何理解原型链？
+> 如何理解原型？如何理解原型链？
 
 ##### 原型
 
 1. 每个 JS 对象都有 `__proto__` 属性，这个属性指向了原型。
 2. 原型也是一个对象，并且这个对象中包含了很多函数，所以我们可以得出一个结论：对于 `obj` 来说，可以通过 `__proto__` 找到一个原型对象，在该对象中定义了很多函数让我们来使用。
-3.  `__proto__` 还有一个`constructor` 属性，其中还有一个 `prototype` 属性，并且这个属性对应的值和先前我们在 `__proto__` 中看到的一模一样。
+3. `__proto__` 还有一个`constructor` 属性，其中还有一个 `prototype` 属性，并且这个属性对应的值和先前我们在 `__proto__` 中看到的一模一样。
 4. 所以我们又可以得出一个结论：原型的 `constructor` 属性指向构造函数，构造函数又通过 `prototype` 属性指回原型，但是并不是所有函数都具有这个属性，`Function.prototype.bind()` 就没有这个属性。
 
 ##### 原型链
@@ -350,9 +428,7 @@ for (let i = 1; i <= 5; i++) {
 
 对象的 `__proto__` 属性指向原型， `__proto__` 将对象和原型连接起来组成了原型链。
 
-
-
-### ES6知识点
+### ES6 知识点
 
 #### var、let 及 const 区别
 
@@ -444,8 +520,6 @@ child instanceof Parent // true
 
 以上继承实现的核心就是将父类的原型赋值给了子类，并且将构造函数设置为子类，这样既解决了无用的父类属性问题，还能正确的找到子类的构造函数。
 
-
-
 ##### Class 继承
 
 ```
@@ -468,8 +542,6 @@ child instanceof Parent // true
 ```
 
 `class` 实现继承的核心在于使用 `extends` 表明继承自哪个父类，并且在子类构造函数中必须调用 `super`，因为这段代码可以看成 `Parent.call(this, value)`。
-
-
 
 #### 模块化
 
@@ -521,7 +593,7 @@ CommonJS 最早是 Node 在使用，目前也仍然广泛使用，比如在 Webp
 module.exports = {
     a: 1
 }
-// or 
+// or
 exports.a = 1
 
 // b.js
@@ -533,7 +605,7 @@ module.a // -> log 1
 
 ```
 var module = require('./a.js')
-module.a 
+module.a
 // 这里其实就是包装了一层立即执行函数，这样就不会污染全局变量了，
 // 重要的是 module 这里，module 是 Node 独有的一个变量
 module.exports = {
@@ -545,7 +617,7 @@ var module = {
   exports: {} // exports 就是个空对象
 }
 // 这个是为什么 exports 和 module.exports 用法相似的原因
-var exports = module.exports 
+var exports = module.exports
 var load = function (module) {
     // 导出的东西
     var a = 1
@@ -556,8 +628,6 @@ var load = function (module) {
 ```
 
 另外虽然 `exports` 和 `module.exports` 用法相似，但是不能对 `exports` 直接赋值。因为 `var exports = module.exports` 这句代码表明了 `exports` 和 `module.exports` 享有相同地址，通过改变对象的属性值会对两者都起效，但是如果直接对 `exports` 赋值就会导致两者不再指向同一个内存地址，修改并不会对 `module.exports` 起效。
-
-
 
 #### ES Module
 
@@ -579,8 +649,6 @@ ES Module 是原生实现的模块化方案，与 CommonJS 有以下几个区别
   export function a() {}
   export default function() {}
   ```
-
-  
 
 #### Proxy(再看一下)
 
@@ -632,8 +700,6 @@ p.a // 'a' = 2
 在上述代码中，我们通过自定义 `set` 和 `get` 函数的方式，在原本的逻辑中插入了我们的函数逻辑，实现了在对对象任何属性进行读写时发出通知。
 
 当然这是简单版的响应式实现，如果需要实现一个 Vue 中的响应式，需要我们在 `get` 中收集依赖，在 `set` 派发更新，之所以 Vue3.0 要使用 `Proxy` 替换原本的 API 原因在于 `Proxy` 无需一层层递归为每个属性添加代理，一次即可完成以上操作，性能上更好，并且原本的实现有一些数据更新不能监听到，但是 `Proxy` 可以完美监听到任何方式的数据改变，唯一缺陷可能就是浏览器的兼容性不好了。
-
-
 
 #### map, filter, reduce(再看一下)
 
@@ -692,28 +758,26 @@ console.log(mapArray, reduceArray) // [2, 4, 6]
 
 ##### 数组常用方法分析
 
-修改原数组的API有:
+修改原数组的 API 有:
 
 splice/reverse/fill/copyWithin/sort/push/pop/unshift/shift
 
-不修改原数组的API有:
+不修改原数组的 API 有:
 
 slice/map/forEach/every/filter/reduce/entries/find
 
 - map: 遍历数组，返回回调返回值组成的新数组
-- forEach: 无法break，可以用try/catch中throw new Error来停止
+- forEach: 无法 break，可以用 try/catch 中 throw new Error 来停止
 - filter: 过滤
-- some: 有一项返回true，则整体为true
-- every: 有一项返回false，则整体为false
+- some: 有一项返回 true，则整体为 true
+- every: 有一项返回 false，则整体为 false
 - join: 通过指定连接符生成字符串
 - sort(fn) / reverse: 排序与反转，改变原数组
 - concat: 连接数组，不影响原数组， 浅拷贝
 - slice(start, end): 返回截断后的新数组，不改变原数组
 - splice(start, number, value...): 返回删除元素组成的数组，value 为插入项，改变原数组
 - indexOf / lastIndexOf(value, fromIndex): 查找数组项，返回对应的下标
-- reduce / reduceRight(fn(prev, cur), defaultPrev): 两两执行，prev 为上次化简函数的return值，cur 为当前值(从第二项开始)
-
-
+- reduce / reduceRight(fn(prev, cur), defaultPrev): 两两执行，prev 为上次化简函数的 return 值，cur 为当前值(从第二项开始)
 
 ### JS 异步编程（需要补充看）
 
@@ -796,7 +860,7 @@ let result3 = it.next()
 
 ```
 
-Generator: [https://www.cnblogs.com/whybxy/p/7645578.html](https://link.juejin.im/?target=https%3A%2F%2Fwww.cnblogs.com%2Fwhybxy%2Fp%2F7645578.html)  第三部分看完
+Generator: [https://www.cnblogs.com/whybxy/p/7645578.html](https://link.juejin.im/?target=https%3A%2F%2Fwww.cnblogs.com%2Fwhybxy%2Fp%2F7645578.html) 第三部分看完
 
 Generator 文章链接:[https://www.cnblogs.com/wangfupeng1988/p/6532713.html](https://link.juejin.im/?target=https%3A%2F%2Fwww.cnblogs.com%2Fwangfupeng1988%2Fp%2F6532713.html)
 
@@ -848,8 +912,6 @@ ajax(url)
 
 `Promise`也是存在一些缺点的，比如无法取消 `Promise`，错误需要通过回调函数捕获。
 
-
-
 #### async 及 await(需要补充)
 
 > async 及 await 的特点，它们的优点和缺点分别是什么？await 原理是什么？
@@ -885,8 +947,6 @@ async function test() {
 
 `await` 内部实现了 `generator`，其实 `await` 就是 `generator` 加上 `Promise` 的语法糖，且内部实现了自动执行 `generator`。
 
-
-
 #### 常用定时器函数
 
 > setTimeout、setInterval、requestAnimationFrame 各有什么特点？
@@ -918,8 +978,8 @@ function loop() {
   let sCeil = Math.ceil(s)
   let sFloor = Math.floor(s)
   // 得到下一次循环所消耗的时间
-  currentInterval = interval - offset 
-  console.log('时：'+h, '分：'+m, '毫秒：'+s, '秒向上取整：'+sCeil, '代码执行时间：'+offset, '下次循环间隔'+currentInterval) 
+  currentInterval = interval - offset
+  console.log('时：'+h, '分：'+m, '毫秒：'+s, '秒向上取整：'+sCeil, '代码执行时间：'+offset, '下次循环间隔'+currentInterval)
 
   setTimeout(loop, currentInterval)
 }
@@ -965,63 +1025,78 @@ setInterval(timer => {
 }, 1000)
 ```
 
-
-
-### 手写Promise
+### 手写 Promise
 
 首先：
 
-[Promise/A+ 规范](https://promisesaplus.com/)  
+[Promise/A+ 规范](https://promisesaplus.com/)
 
-[Promise/A+ 规范（译）](https://link.juejin.im/?target=http%3A%2F%2Fwww.ituring.com.cn%2Farticle%2F66566)  
+[Promise/A+ 规范（译）](https://link.juejin.im/?target=http%3A%2F%2Fwww.ituring.com.cn%2Farticle%2F66566)
 
-[史上最最最详细的手写Promise教程](https://juejin.im/post/5b2f02cd5188252b937548ab)  
+[史上最最最详细的手写 Promise 教程](https://juejin.im/post/5b2f02cd5188252b937548ab)
 
+### Vue 常考基础知识点
 
+#### 生命周期钩子函数（8 个生命周期、keep-alive）
 
-### Vue常考基础知识点
+keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数
 
-####  生命周期钩子函数（8个生命周期、keep-alive）
- keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数
-####  组件通信
-  - 父子组件通信(几种新方式了解下)
-  - 兄弟组件通信（查找父组件中的子组件）
-  - 跨多层级组件通信（provide / inject）
-  - 任意组件（Vuex 或者 Event Bus）
-####  extend 能做什么  
-作用是扩展组件生成一个构造器，通常会与 $mount 一起使用。
-####  mixin 和 mixins 区别
-  - mixin 用于全局混入，会影响到每个组件实例，通常插件都是这样做初始化的。
-  - mixins 应该是我们最常使用的扩展组件的方式了。如果多个组件中有相同的业务逻辑，就可以将这些逻辑剥离出来，通过 mixins 混入代码，比如上拉下拉加载数据这种逻辑等等。
-####  computed 和 watch 区别
-   - computed 是计算属性，依赖其他属性计算值，并且 computed 的值有缓存，只有当计算值变化才会返回内容。
-   - watch 监听到值的变化就会执行回调，在回调中可以进行一些逻辑操作。
-   - 所以一般来说需要依赖别的属性来动态获得值的时候可以使用 computed，对于监听到值的变化需要做一些复杂业务逻辑的情况可以使用 watch
+#### 组件通信
 
-####  keep-alive 组件有什么作用  
-  - 如果你需要在组件切换的时候，保存一些组件的状态防止多次渲染，就可以使用 keep-alive 组件包裹需要保存的组件。
+- 父子组件通信(几种新方式了解下)
+- 兄弟组件通信（查找父组件中的子组件）
+- 跨多层级组件通信（provide / inject）
+- 任意组件（Vuex 或者 Event Bus）
 
-  - 对于 keep-alive 组件来说，它拥有两个独有的生命周期钩子函数，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数。
+#### extend 能做什么
 
-####  v-show 与 v-if 区别
+作用是扩展组件生成一个构造器，通常会与 \$mount 一起使用。
+
+#### mixin 和 mixins 区别
+
+- mixin 用于全局混入，会影响到每个组件实例，通常插件都是这样做初始化的。
+- mixins 应该是我们最常使用的扩展组件的方式了。如果多个组件中有相同的业务逻辑，就可以将这些逻辑剥离出来，通过 mixins 混入代码，比如上拉下拉加载数据这种逻辑等等。
+
+#### computed 和 watch 区别
+
+- computed 是计算属性，依赖其他属性计算值，并且 computed 的值有缓存，只有当计算值变化才会返回内容。
+- watch 监听到值的变化就会执行回调，在回调中可以进行一些逻辑操作。
+- 所以一般来说需要依赖别的属性来动态获得值的时候可以使用 computed，对于监听到值的变化需要做一些复杂业务逻辑的情况可以使用 watch
+
+#### keep-alive 组件有什么作用
+
+- 如果你需要在组件切换的时候，保存一些组件的状态防止多次渲染，就可以使用 keep-alive 组件包裹需要保存的组件。
+
+- 对于 keep-alive 组件来说，它拥有两个独有的生命周期钩子函数，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数。
+
+#### v-show 与 v-if 区别
+
 一个是初始渲染内存消耗，一个是切换内存消耗。
 
-####  组件中 data 什么时候可以使用对象
-  - 组件复用时所有组件实例都会共享 data，如果 data 是对象的话，就会造成一个组件修改 data 以后会影响到其他所有组件，所以需要将 data 写成函数，每次用到就调用一次函数获得新的数据。
+#### 组件中 data 什么时候可以使用对象
 
-  - 当我们使用 new Vue() 的方式的时候，无论我们将 data 设置为对象还是函数都是可以的，因为 new Vue() 的方式是生成一个根组件，该组件不会复用，也就不存在共享 data 的情况了。
+- 组件复用时所有组件实例都会共享 data，如果 data 是对象的话，就会造成一个组件修改 data 以后会影响到其他所有组件，所以需要将 data 写成函数，每次用到就调用一次函数获得新的数据。
 
-### Vue常考进阶知识点
-###  响应式原理
+- 当我们使用 new Vue() 的方式的时候，无论我们将 data 设置为对象还是函数都是可以的，因为 new Vue() 的方式是生成一个根组件，该组件不会复用，也就不存在共享 data 的情况了。
+
+### Vue 常考进阶知识点
+
+### 响应式原理
+
 在组件挂载时，会先对所有需要的属性调用 Object.defineProperty()，然后实例化 Watcher，传入组件更新的回调。在实例化过程中，会对模板中的属性进行求值，触发依赖收集。
-####  Object.defineProperty 的缺陷
-####  编译过程
-####  NextTick 原理分析
+
+#### Object.defineProperty 的缺陷
+
+#### 编译过程
+
+#### NextTick 原理分析
+
 可以让我们在下次 DOM 更新循环结束之后执行延迟回调，用于获得更新后的 DOM。
 
 ### 监控
+
 - 页面埋点
 - 性能监控
-可以直接使用浏览器自带的 Performance API 来实现这个功能。
+  可以直接使用浏览器自带的 Performance API 来实现这个功能。
 - 只需要调用 performance.getEntriesByType('navigation')
 - 异常监控
