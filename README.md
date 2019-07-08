@@ -57,6 +57,47 @@
     - [setInterval](#setinterval)
     - [requestAnimationFrame](#requestanimationframe)
 - [手写 Promise](#手写-promise)
+- [Event Lop](#event-lop)
+- [JS 高阶知识点](#js-高阶知识点)
+  - [手写 call、apply 及 bind 函数(再看一下)](#手写-callapply-及-bind-函数再看一下)
+  - [new](#new)
+  - [instanceof 的原理](#instanceof-的原理)
+  - [为什么 0.1 + 0.2 != 0.3](#为什么-01--02--03)
+  - [垃圾回收机制](#垃圾回收机制)
+    - [新生代算法](#新生代算法)
+    - [老生代算法](#老生代算法)
+- [浏览器基础知识点](#浏览器基础知识点)
+  - [事件触发三阶段](#事件触发三阶段)
+  - [注册事件](#注册事件)
+  - [事件代理](#事件代理)
+  - [跨域（需要补充 nginx、优缺点、webworker 等）](#跨域需要补充-nginx优缺点webworker-等)
+    - [JSONP](#jsonp)
+    - [CORS](#cors)
+      - [简单请求](#简单请求)
+      - [复杂请求](#复杂请求)
+    - [document.domain](#documentdomain)
+    - [postMessage](#postmessage)
+  - [存储](#存储)
+    - [cookie，localStorage，sessionStorage，indexDB](#cookielocalstoragesessionstorageindexdb)
+    - [Service Worker](#service-worker)
+- [浏览器缓存机制](#浏览器缓存机制)
+  - [缓存位置](#缓存位置)
+    - [Service Worker](#service-worker-1)
+    - [Memory Cache](#memory-cache)
+    - [Disk Cache](#disk-cache)
+    - [Push Cache](#push-cache)
+    - [网络请求](#网络请求)
+  - [缓存策略](#缓存策略)
+    - [强缓存](#强缓存)
+      - [Expires](#expires)
+      - [Cache-control](#cache-control)
+    - [协商缓存](#协商缓存)
+      - [Last-Modified 和 If-Modified-Since](#last-modified-和-if-modified-since)
+      - [ETag 和 If-None-Match](#etag-和-if-none-match)
+  - [实际场景应用缓存策略](#实际场景应用缓存策略)
+    - [频繁变动的资源](#频繁变动的资源)
+    - [代码文件](#代码文件)
+- [浏览器渲染原理](#浏览器渲染原理)
 - [Vue 常考基础知识点](#vue-常考基础知识点)
   - [生命周期钩子函数（8 个生命周期、keep-alive）](#生命周期钩子函数8-个生命周期keep-alive)
   - [组件通信](#组件通信)
@@ -1034,6 +1075,441 @@ setInterval(timer => {
 [Promise/A+ 规范（译）](https://link.juejin.im/?target=http%3A%2F%2Fwww.ituring.com.cn%2Farticle%2F66566)
 
 [史上最最最详细的手写 Promise 教程](https://juejin.im/post/5b2f02cd5188252b937548ab)
+
+### Event Lop
+
+[【JS】Event-loop——JS 执行机制](https://rosychen.com/2019/06/20/2019-06-20-[JS]Event-loop/)
+
+[这一次，彻底弄懂 JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89#heading-6)
+
+### JS 高阶知识点
+
+#### 手写 call、apply 及 bind 函数(再看一下)
+
+> call、apply 及 bind 函数内部实现是怎么样的？
+
+#### new
+
+> new 的原理是什么？通过 new 的方式创建对象和通过字面量创建有什么区别？
+
+在调用 `new` 的过程中会发生以上四件事情：
+
+1. 新生成了一个对象
+2. 链接到原型
+3. 绑定 this
+4. 返回新对象
+
+对于对象来说，其实都是通过 `new` 产生的，无论是 `function Foo()` 还是 `let a = { b : 1 }` 。
+
+对于创建一个对象来说，更推荐使用字面量的方式创建对象（无论性能上还是可读性）。因为你使用 `new Object()` 的方式创建对象需要通过作用域链一层层找到 `Object`，但是你使用字面量的方式就没这个问题。
+
+#### instanceof 的原理
+
+> instanceof 的原理是什么？
+
+`instanceof` 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 `prototype`。
+
+```
+function myInstanceof(left, right) {
+  let prototype = right.prototype
+  left = left.__proto__
+  while (true) {
+    if (left === null || left === undefined)
+      return false
+    if (prototype === left)
+      return true
+    left = left.__proto__
+  }
+}
+```
+
+- 首先获取类型的原型
+- 然后获得对象的原型
+- 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 `null`，因为原型链最终为 `null`
+
+#### 为什么 0.1 + 0.2 != 0.3
+
+> 为什么 0.1 + 0.2 != 0.3？如何解决这个问题？
+
+JS 采用 IEEE 754 双精度版本（64 位），并且只要采用 IEEE 754 的语言都有该问题。
+
+`0.1` 在二进制中是无限循环的一些数字，其实不只是 `0.1`，其实很多十进制小数用二进制表示都是无限循环的。这样其实没什么问题，但是 JS 采用的浮点数标准却会裁剪掉我们的数字。
+
+那么这些循环的数字被裁剪了，就会出现精度丢失的问题，也就造成了 `0.1` 不再是 `0.1` 了，而是变成了 `0.100000000000000002`,同样的，`0.2` 在二进制也是无限循环的，被裁剪后也失去了精度变成了 `0.200000000000000002`
+
+所以这两者相加不等于 `0.3` 而是 `0.300000000000000004`
+
+既然 `0.1` 不是 `0.1`，那为什么 `console.log(0.1)` 却是正确的呢？
+
+因为在输入内容的时候，二进制被转换为了十进制，十进制又被转换为了字符串，在这个转换的过程中发生了取近似值的过程，所以打印出来的其实是一个近似值，你也可以通过以下代码来验证
+
+```
+console.log(0.100000000000000002) // 0.1
+```
+
+那么说完了为什么，最后来说说怎么解决这个问题吧。其实解决的办法有很多，这里我们选用原生提供的方式来最简单的解决问题
+
+```
+parseFloat((0.1 + 0.2).toFixed(10)) === 0.3 // true
+```
+
+#### 垃圾回收机制
+
+> V8 下的垃圾回收机制是怎么样的？
+
+V8 实现了准确式 GC(Garbage Collection)，GC 算法采用了分代式垃圾回收机制。因此，V8 将内存（堆）分为新生代和老生代两部分。
+
+##### 新生代算法
+
+新生代中的对象一般存活时间较短，使用 Scavenge GC 算法。
+
+在新生代空间中，内存空间分为两部分，分别为 From 空间和 To 空间。在这两个空间中，必定有一个空间是使用的，另一个空间是空闲的。新分配的对象会被放入 From 空间中，当 From 空间被占满时，新生代 GC 就会启动了。算法会检查 From 空间中存活的对象并复制到 To 空间中，如果有失活的对象就会销毁。当复制完成后将 From 空间和 To 空间互换，这样 GC 就结束了。
+
+##### 老生代算法
+
+老生代中的对象一般存活时间较长且数量也多，使用了两个算法，分别是标记清除算法和标记压缩算法。
+
+先来说下什么情况下对象会出现在老生代空间中：
+
+- 新生代中的对象是否已经经历过一次 Scavenge 算法，如果经历过的话，会将对象从新生代空间移到老生代空间中。
+- To 空间的对象占比大小超过 25 %。在这种情况下，为了不影响到内存分配，会将对象从新生代空间移到老生代空间中。
+
+老生代中的空间很复杂，有如下几个空间
+
+```
+enum AllocationSpace {
+  // TODO(v8:7464): Actually map this space's memory as read-only.
+  RO_SPACE,    // 不变的对象空间
+  NEW_SPACE,   // 新生代用于 GC 复制算法的空间
+  OLD_SPACE,   // 老生代常驻对象空间
+  CODE_SPACE,  // 老生代代码对象空间
+  MAP_SPACE,   // 老生代 map 对象
+  LO_SPACE,    // 老生代大空间对象
+  NEW_LO_SPACE,  // 新生代大空间对象
+
+  FIRST_SPACE = RO_SPACE,
+  LAST_SPACE = NEW_LO_SPACE,
+  FIRST_GROWABLE_PAGED_SPACE = OLD_SPACE,
+  LAST_GROWABLE_PAGED_SPACE = MAP_SPACE
+};
+```
+
+在这个阶段中，会遍历堆中所有的对象，然后标记活的对象，在标记完成后，销毁所有没有被标记的对象。在标记大型堆内存时，可能需要几百毫秒才能完成一次标记。这就会导致一些性能上的问题。为了解决这个问题，2011 年，V8 从 stop-the-world 标记切换到增量标志。在增量标记期间，GC 将标记工作分解为更小的模块，可以让 JS 应用逻辑在模块间隙执行一会，从而不至于让应用出现停顿情况。
+
+在 2018 年，GC 技术又有了一个重大突破，这项技术名为并发标记。该技术可以让 GC 扫描和标记对象时，同时允许 JS 运行。
+
+清除对象后会造成堆内存出现碎片的情况，当碎片超过一定限制后会启动压缩算法。在压缩过程中，将活的对象像一端移动，直到所有对象都移动完成然后清理掉不需要的内存。
+
+### 浏览器基础知识点
+
+#### 事件触发三阶段
+
+> 事件的触发过程是怎么样的？知道什么是事件代理嘛？
+
+事件触发有三个阶段：
+
+- `window` 往事件触发处传播，遇到注册的捕获事件会触发
+- 传播到事件触发处时触发注册的事件
+- 从事件触发处往 `window` 传播，遇到注册的冒泡事件会触发
+
+事件触发一般来说会按照上面的顺序进行，但是也有特例，**如果给一个 body 中的子节点同时注册冒泡和捕获事件，事件触发会按照注册的顺序执行。**
+
+#### 注册事件
+
+通常我们使用 `addEventListener` 注册事件，该函数的第三个参数可以是布尔值，也可以是对象。对于布尔值 `useCapture` 参数来说，该参数默认值为 `false` ，`useCapture` 决定了注册的事件是捕获事件还是冒泡事件。对于对象参数来说，可以使用以下几个属性
+
+- `capture`：布尔值，和 `useCapture` 作用一样
+- `once`：布尔值，值为 `true` 表示该回调只会调用一次，调用后会移除监听
+- `passive`：布尔值，表示永远不会调用 `preventDefault`
+
+一般来说，如果我们只希望事件只触发在目标上，这时候可以使用 `stopPropagation` 来阻止事件的进一步传播。通常我们认为 `stopPropagation` 是用来阻止事件冒泡的，其实该函数也可以阻止捕获事件。`stopImmediatePropagation` 同样也能实现阻止事件，但是还能阻止该事件目标执行别的注册事件。
+
+#### 事件代理
+
+如果一个节点中的子节点是动态生成的，那么子节点需要注册事件的话**应该注册在父节点上**
+
+事件代理的方式相较于直接给目标注册事件来说，有以下优点：
+
+- 节省内存
+- 不需要给子节点注销事件
+
+#### 跨域（需要补充 nginx、优缺点、webworker 等）
+
+> 什么是跨域？为什么浏览器要使用同源策略？你有几种方式可以解决跨域问题？了解预检请求嘛？
+
+因为浏览器出于安全考虑，有同源策略。也就是说，如果协议、域名或者端口有一个不同就是跨域，Ajax 请求会失败。
+
+**那么是出于什么安全考虑才会引入这种机制呢？** 其实主要是用来防止 CSRF 攻击的。简单点说，CSRF 攻击是利用用户的登录态发起恶意请求。
+
+也就是说，没有同源策略的情况下，A 网站可以被任意其他来源的 Ajax 访问到内容。如果你当前 A 网站还存在登录态，那么对方就可以通过 Ajax 获得你的任何信息。当然同源策略并不能完全阻止 CSRF。
+
+**然后我们来考虑一个问题，请求跨域了，那么请求到底发出去没有？** 请求必然是发出去了，但是浏览器拦截了响应。你可能会疑问明明通过表单的方式可以发起跨域请求，为什么 Ajax 就不会。因为归根结底，跨域是为了阻止用户读取到另一个域名下的内容，Ajax 可以获取响应，浏览器认为这不安全，所以拦截了响应。但是表单并不会获取新的内容，所以可以发起跨域请求。同时也说明了跨域并不能完全阻止 CSRF，因为请求毕竟是发出去了。
+
+接下来我们将来学习几种常见的方式来解决跨域的问题。
+
+##### JSONP
+
+JSONP 的原理很简单，就是利用 `<script>` 标签没有跨域限制的漏洞。通过 `<script>` 标签指向一个需要访问的地址并提供一个回调函数来接收数据。
+
+JSONP 使用简单且兼容性不错，但是只限于 `get` 请求。
+
+在开发中可能会遇到多个 JSONP 请求的回调函数名是相同的，这时候就需要自己封装一个 JSONP，以下是简单实现
+
+```
+function jsonp(url, jsonpCallback, success) {
+  let script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.type = 'text/javascript'
+  window[jsonpCallback] = function(data) {
+    success && success(data)
+  }
+  document.body.appendChild(script)
+}
+jsonp('http://xxx', 'callback', function(value) {
+  console.log(value)
+})
+```
+
+##### CORS
+
+CORS 需要浏览器和后端同时支持。IE 8 和 9 需要通过 `XDomainRequest` 来实现。
+
+浏览器会自动进行 CORS 通信，实现 CORS 通信的关键是**后端**。只要后端实现了 CORS，就实现了跨域。
+
+服务端设置 `Access-Control-Allow-Origin` 就可以开启 CORS。 该属性表示哪些域名可以访问资源，如果设置通配符则表示所有网站都可以访问资源。
+
+虽然设置 CORS 和前端没什么关系，但是通过这种方式解决跨域问题的话，会在发送请求时出现两种情况，分别为**简单请求和复杂请求**。
+
+###### 简单请求
+
+以 Ajax 为例，当满足以下条件时，会触发简单请求
+
+1. 使用下列方法之一：
+   - `GET`
+   - `HEAD`
+   - `POST`
+2. `Content-Type` 的值仅限于下列三者之一：
+   - `text/plain`
+   - `multipart/form-data`
+   - `application/x-www-form-urlencoded`
+
+请求中的任意 `XMLHttpRequestUpload` 对象均没有注册任何事件监听器； `XMLHttpRequestUpload` 对象可以使用 `XMLHttpRequest.upload` 属性访问。
+
+###### 复杂请求
+
+那么很显然，不符合以上条件的请求就肯定是复杂请求了。
+
+对于复杂请求来说，首先会发起一个预检请求，该请求是 `option` 方法的，通过该请求来知道服务端是否允许跨域请求。
+
+对于预检请求来说，如果你使用过 Node 来设置 CORS 的话，可能会遇到过这么一个坑。
+
+以下以 express 框架举例：
+
+```
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials'
+  )
+  next()
+})
+```
+
+该请求会验证你的 `Authorization` 字段，没有的话就会报错。
+
+当前端发起了复杂请求后，你会发现就算你代码是正确的，返回结果也永远是报错的。因为预检请求也会进入回调中，也会触发 `next` 方法，因为预检请求并不包含 `Authorization` 字段，所以服务端会报错。
+
+想解决这个问题很简单，只需要在回调中过滤 `option` 方法即可
+
+```
+res.statusCode = 204
+res.setHeader('Content-Length', '0')
+res.end()
+```
+
+##### document.domain
+
+该方式只能用于**二级域名相同**的情况下，比如 `a.test.com` 和 `b.test.com` 适用于该方式。
+
+只需要给页面添加 `document.domain = 'test.com'` 表示二级域名都相同就可以实现跨域
+
+##### postMessage
+
+这种方式通常用于获取嵌入页面中的第三方页面数据。一个页面发送消息，另一个页面判断来源并接收消息
+
+```
+// 发送消息端
+window.parent.postMessage('message', 'http://test.com')
+// 接收消息端
+var mc = new MessageChannel()
+mc.addEventListener('message', event => {
+  var origin = event.origin || event.originalEvent.origin
+  if (origin === 'http://test.com') {
+    console.log('验证通过')
+  }
+})
+```
+
+#### 存储
+
+> 有几种方式可以实现存储功能，分别有什么优缺点？什么是 Service Worker？
+
+##### cookie，localStorage，sessionStorage，indexDB
+
+我们先来通过表格学习下这几种存储方式的区别
+
+| 特性         | **cookie**                                 | localStorage             | sessionStorage | indexDB                  |
+| ------------ | ------------------------------------------ | ------------------------ | -------------- | ------------------------ |
+| 数据生命周期 | 一般由服务器生成，可以设置过期时间         | 除非被清理，否则一直存在 | 页面关闭就清理 | 除非被清理，否则一直存在 |
+| 数据存储大小 | 4K                                         | 5M                       | 5M             | 无限                     |
+| 与服务端通信 | 每次都会携带在 header 中，对于请求性能影响 | 不参与                   | 不参与         | 不参与                   |
+
+从上表可以看到，`cookie` 已经不建议用于存储。如果没有大量数据存储需求的话，可以使用 `localStorage` 和 `sessionStorage` 。对于不怎么改变的数据尽量使用 `localStorage` 存储，否则可以用 `sessionStorage` 存储。
+
+对于 `cookie` 来说，我们还需要注意安全性。
+
+value 如果用于保存用户登录态，应该将该值加密，不能使用明文的用户标识
+
+http-only 不能通过 JS 访问 Cookie，减少 XSS 攻击
+
+secure 只能在协议为 HTTPS 的请求中携带
+
+same-site 规定浏览器不能在跨域请求中携带 Cookie，减少 CSRF 攻击
+
+##### Service Worker
+
+Service Worker 是运行在浏览器背后的**独立线程**，一般可以用来实现缓存功能。使用 Service Worker 的话，传输协议必须为 **HTTPS**。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。
+
+### 浏览器缓存机制
+
+> 该知识点属于性能优化领域
+
+缓存可以说是性能优化中**简单高效**的一种优化方式了，它可以**显著减少网络传输所带来的损耗**。
+
+对于一个数据请求来说，可以分为发起网络请求、后端处理、浏览器响应三个步骤。浏览器缓存可以帮助我们在第一和第三步骤中优化性能。比如说直接使用缓存而不发起请求，或者发起了请求但后端存储的数据和前端一致，那么就没有必要再将数据回传回来，这样就减少了响应数据。
+
+#### 缓存位置
+
+从缓存位置上来说分为四种，并且各自有**优先级**，当依次查找缓存且都没有命中的时候，才会去请求网络
+
+1. Service Worker
+
+2. Memory Cache
+
+3. Disk Cache
+
+4. Push Cache
+
+5. 网络请求
+
+##### Service Worker
+
+Service Worker 的缓存与浏览器其他内建的缓存机制不同，它可以让我们**自由控制**缓存哪些文件、如何匹配缓存、如何读取缓存，并且**缓存是持续性的**。
+
+当 Service Worker 没有命中缓存的时候，我们需要去调用 `fetch` 函数获取数据。也就是说，如果我们没有在 Service Worker 命中缓存的话，会根据缓存查找优先级去查找数据。
+
+##### Memory Cache
+
+Memory Cache 也就是内存中的缓存，读取内存中的数据肯定比磁盘快。**但是内存缓存虽然读取高效，可是缓存持续性很短，会随着进程的释放而释放。** 一旦我们关闭 Tab 页面，内存中的缓存也就被释放了。
+
+当我们访问过页面以后，再次刷新页面，可以发现很多数据都来自于内存缓存。
+
+那么既然内存缓存这么高效，我们是不是能让数据都存放在内存中呢？
+
+先说结论，这是**不可能**的。首先计算机中的内存一定比硬盘容量小得多，操作系统需要精打细算内存的使用，所以能让我们使用的内存必然不多。内存中其实可以存储大部分的文件，比如说 JSS、HTML、CSS、图片等等。但是浏览器会把哪些文件丢进内存这个过程就很**玄学**了，我查阅了很多资料都没有一个定论。
+
+当然，我通过一些实践和猜测也得出了一些结论：
+
+- 对于大文件来说，大概率是不存储在内存中的，反之优先
+- 当前系统内存使用率高的话，文件优先存储进硬盘
+
+##### Disk Cache
+
+Disk Cache 也就是存储在硬盘中的缓存，读取速度慢点，但是什么都能存储到磁盘中，比之 Memory Cache **胜在容量和存储时效性上。**
+
+在所有浏览器缓存中，Disk Cache 覆盖面基本是最大的。它会根据 HTTP Herder 中的字段判断哪些资源需要缓存，哪些资源可以不请求直接使用，哪些资源已经过期需要重新请求。**并且即使在跨站点的情况下，相同地址的资源一旦被硬盘缓存下来，就不会再次去请求数据。**
+
+##### Push Cache
+
+Push Cache 是 HTTP/2 中的内容，当以上三种缓存都没有命中时，它才会被使用。**并且缓存时间也很短暂，只在会话（Session）中存在，一旦会话结束就被释放。**
+
+##### 网络请求
+
+如果所有缓存都没有命中的话，那么只能发起请求来获取资源了。
+
+那么为了性能上的考虑，大部分的接口都应该选择好缓存策略，接下来我们就来学习缓存策略这部分的内容。
+
+#### 缓存策略
+
+通常浏览器缓存策略分为两种：**强缓存**和**协商缓存**，并且缓存策略都是通过设置 HTTP Header 来实现的。
+
+##### 强缓存
+
+强缓存可以通过设置两种 HTTP Header 实现：`Expires` 和 `Cache-Control` 。强缓存表示在缓存期间不需要请求，`state code` 为 200。
+
+###### Expires
+
+```
+Expires: Wed, 22 Oct 2018 08:41:00 GMT
+```
+
+`Expires` 是 HTTP/1 的产物，表示资源会在 `Wed, 22 Oct 2018 08:41:00 GMT` 后过期，需要再次请求。并且 `Expires` **受限于本地时间**，如果修改了本地时间，可能会造成缓存失效。
+
+###### Cache-control
+
+```
+Cache-control: max-age=30
+```
+
+`Cache-Control` 出现于 HTTP/1.1，**优先级高于 Expires** 。该属性值表示资源会在 30 秒后过期，需要再次请求。
+
+`Cache-Control` **可以在请求头或者响应头中设置**，并且可以组合使用多种指令
+
+##### 协商缓存
+
+如果缓存过期了，就需要发起请求验证资源是否有更新。协商缓存可以通过设置两种 HTTP Header 实现：`Last-Modified` 和 `ETag` 。
+
+当浏览器发起请求验证资源时，如果资源没有做改变，那么服务端就会返回 304 状态码，并且更新浏览器缓存有效期。
+
+###### Last-Modified 和 If-Modified-Since
+
+`Last-Modified` 表示本地文件最后修改日期，`If-Modified-Since` 会将 `Last-Modified` 的值发送给服务器，询问服务器在该日期后资源是否有更新，有更新的话就会将新的资源发送回来，否则返回 304 状态码。
+
+但是 `Last-Modified` 存在一些弊端：
+
+- 如果本地打开缓存文件，即使没有对文件进行修改，但还是会造成 `Last-Modified` 被修改，服务端不能命中缓存导致发送相同的资源
+- 因为 `Last-Modified` 只能以秒计时，如果在不可感知的时间内修改完成文件，那么服务端会认为资源还是命中了，不会返回正确的资源
+
+因为以上这些弊端，所以在 HTTP / 1.1 出现了 `ETag` 。
+
+###### ETag 和 If-None-Match
+
+`ETag` 类似于文件指纹，`If-None-Match` 会将当前 `ETag` 发送给服务器，询问该资源 `ETag` 是否变动，有变动的话就将新的资源发送回来。并且 `ETag` 优先级比 `Last-Modified` 高。
+
+以上就是缓存策略的所有内容了，看到这里，不知道你是否存在这样一个疑问。**如果什么缓存策略都没设置，那么浏览器会怎么处理？**
+
+对于这种情况，浏览器会采用一个启发式的算法，通常会取响应头中的 `Date` 减去 `Last-Modified` 值的 10% 作为缓存时间。
+
+#### 实际场景应用缓存策略
+
+单纯了解理论而不付诸于实践是没有意义的，接下来通过几个场景学习下如何使用这些理论。
+
+##### 频繁变动的资源
+
+对于频繁变动的资源，首先需要使用 `Cache-Control: no-cache` 使浏览器每次都请求服务器，然后配合 `ETag` 或者 `Last-Modified` 来验证资源是否有效。这样的做法虽然不能节省请求数量，但是能显著减少响应数据大小。
+
+##### 代码文件
+
+这里特指除了 HTML 外的代码文件，因为 HTML 文件一般不缓存或者缓存时间很短。
+
+一般来说，现在都会使用工具来打包代码，那么我们就可以对文件名进行哈希处理，只有当代码修改后才会生成新的文件名。基于此，我们就可以给代码文件设置缓存有效期一年 `Cache-Control: max-age=31536000`，这样只有当 HTML 文件中引入的文件名发生了改变才会去下载最新的代码文件，否则就一直使用缓存。
+
+浏览器缓存文章：[https://github.com/ljianshu/Blog/issues/23](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fljianshu%2FBlog%2Fissues%2F23)
+
+### 浏览器渲染原理
 
 ### Vue 常考基础知识点
 
