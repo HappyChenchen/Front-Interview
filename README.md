@@ -110,9 +110,9 @@
   - [XSS](#xss)
     - [什么是XSS攻击？](#什么是xss攻击)
     - [攻击来源分为三类](#攻击来源分为三类)
-      - [**1. 存储型XSS**](#1-存储型xss)
-      - [**2. 反射型XSS**](#2-反射型xss)
-      - [**3. DOM型XSS**](#3-dom型xss)
+      - [1. 存储型XSS](#1-存储型xss)
+      - [2. 反射型XSS](#2-反射型xss)
+      - [3. DOM型XSS](#3-dom型xss)
     - [如何防御](#如何防御)
   - [CSRF](#csrf)
     - [攻击原理](#攻击原理)
@@ -134,6 +134,39 @@
   - [中间人攻击](#中间人攻击)
 - [从 V8 中看 JS 性能优化](#从-v8-中看-js-性能优化)
   - [测试性能工具](#测试性能工具)
+  - [JS性能优化](#js性能优化)
+- [性能优化琐碎事](#性能优化琐碎事)
+  - [图片优化](#图片优化)
+    - [计算图片大小](#计算图片大小)
+    - [图片加载优化](#图片加载优化)
+  - [DNS 预解析](#dns-预解析)
+  - [防抖](#防抖)
+  - [节流](#节流)
+  - [预加载](#预加载)
+  - [预渲染](#预渲染)
+  - [懒执行](#懒执行)
+  - [懒加载](#懒加载)
+  - [CDN](#cdn)
+- [Webpack 性能优化](#webpack-性能优化)
+  - [减少 Webpack 打包时间](#减少-webpack-打包时间)
+    - [优化 Loader](#优化-loader)
+    - [HappyPack](#happypack)
+    - [DllPlugin](#dllplugin)
+    - [代码压缩](#代码压缩)
+    - [一些小的优化点](#一些小的优化点)
+  - [减少 Webpack 打包后的文件体积](#减少-webpack-打包后的文件体积)
+    - [按需加载](#按需加载)
+    - [Scope Hoisting](#scope-hoisting)
+    - [Tree Shaking](#tree-shaking)
+    - [开启gzip压缩](#开启gzip压缩)
+- [React 和 Vue 两大框架](#react-和-vue-两大框架)
+  - [MVVM](#mvvm)
+  - [Virtual DOM](#virtual-dom)
+  - [路由原理](#路由原理)
+    - [Hash 模式](#hash-模式)
+    - [History 模式](#history-模式)
+    - [两种模式对比](#两种模式对比)
+  - [Vue 和 React 之间的区别](#vue-和-react-之间的区别)
 - [Vue 常考基础知识点](#vue-常考基础知识点)
   - [生命周期钩子函数（8 个生命周期、keep-alive）](#生命周期钩子函数8-个生命周期keep-alive)
   - [组件通信](#组件通信)
@@ -144,11 +177,24 @@
   - [v-show 与 v-if 区别](#v-show-与-v-if-区别)
   - [组件中 data 什么时候可以使用对象](#组件中-data-什么时候可以使用对象)
 - [Vue 常考进阶知识点](#vue-常考进阶知识点)
-- [响应式原理](#响应式原理)
+  - [响应式原理](#响应式原理)
   - [Object.defineProperty 的缺陷](#objectdefineproperty-的缺陷)
   - [编译过程](#编译过程)
   - [NextTick 原理分析](#nexttick-原理分析)
 - [监控](#监控)
+  - [页面埋点](#页面埋点)
+  - [性能监控](#性能监控)
+  - [异常监控](#异常监控)
+    - [代码报错](#代码报错)
+    - [接口异常](#接口异常)
+- [UDP](#udp)
+  - [面向无连接](#面向无连接)
+  - [不可靠性](#不可靠性)
+  - [高效](#高效)
+  - [传输方式](#传输方式)
+  - [适合使用的场景](#适合使用的场景)
+- [TCP](#tcp)
+  - [头部](#头部)
 
 <!-- /TOC -->
 
@@ -316,7 +362,7 @@ apply、call、bind 这些 API 的`this` 取决于第一个参数，如果第一
 
 ### this 的规则
 
-![chp101](\chp101.png)
+![this](this.png)
 
 
 
@@ -1779,18 +1825,18 @@ XSS（Cross-Site Scripting，又称跨站脚本攻击）是一种代码注入攻
 
 ### 攻击来源分为三类
 
-#### **1. 存储型XSS**
+#### 1. 存储型XSS
 
 - 攻击步骤：攻击者将恶意代码提交到目标网站的数据库中，用户打开网站是，网站服务端将恶意代码从数据库中取出，拼接在HTML中返回浏览器，之后用户浏览器收到响应后解析执行混入其中的恶意代码，恶意代码窃取用户数据并发送到攻击者的网站，或者冒充用户行为，调用目标网站接口执行攻击者指定的操作。
 - 常见于带有用户保存数据的网站功能，比如论坛发帖、商品评价、用户私信等等。
 
-#### **2. 反射型XSS**
+#### 2. 反射型XSS
 
 - 攻击步骤：攻击者构造出特殊的URL，其中包含恶意代码。当用户打开带有恶意代码的URL时，网站服务端将恶意代码从URL中取出，拼接在HTML中返回浏览器，之后用户浏览器收到响应后解析执行混入其中的恶意代码，恶意代码窃取用户数据并发送到攻击者的网站，或者冒充用户行为，调用目标网站接口执行攻击者指定的操作。
 - 常见于通过 URL 传递参数的功能，如网站搜索、跳转等。由于需要用户主动打开恶意的 URL 才能生效，攻击者往往会结合多种手段诱导用户点击。
 - 反射型 XSS 跟存储型 XSS 的区别是：存储型 XSS 的恶意代码存在数据库里，反射型 XSS 的恶意代码存在 URL 里。
 
-#### **3. DOM型XSS**
+#### 3. DOM型XSS
 
 - 攻击步骤：攻击者构造出特殊的URL，其中包含恶意代码，用户打开带有恶意代码的URL，用户浏览器打开带有恶意代码的URL，之后用户浏览器收到响应后解析执行，前端JS取出URL中的恶意代码并执行，恶意代码窃取用户数据并发送到攻击者的网站，或者冒充用户行为，调用目标网站接口执行攻击者指定的操作。
 - DOM 型 XSS 跟前两种 XSS 的区别：DOM 型 XSS 攻击中，取出和执行恶意代码由浏览器端完成，属于前端 JavaScript 自身的安全漏洞，而其他两种 XSS 都属于服务端的安全漏洞。
@@ -1799,17 +1845,17 @@ XSS（Cross-Site Scripting，又称跨站脚本攻击）是一种代码注入攻
 
 防止 HTML 中出现注入；防止 JavaScript 执行时，执行恶意代码。
 
-**1. 预防存储型和反射型 XSS 攻击：**
+1. 预防存储型和反射型 XSS 攻击：
 
 - 改成纯前端渲染，把代码和数据分隔开。
 - 对 HTML 做充分转义。
 
-**2. 预防 DOM 型 XSS 攻击：**
+2. 预防 DOM 型 XSS 攻击：
 
 - 在使用 .innerHTML、.outerHTML、document.write() 时要特别小心，不要把不可信的数据作为 HTML 插到页面上，而应尽量使用 .textContent、.setAttribute() 等。
 - 如果用 Vue/React 技术栈，并且不使用 v-html/dangerouslySetInnerHTML 功能，就在前端 render 阶段避免 innerHTML、outerHTML 的 XSS 隐患。
 
-**3. 其他XSS攻击防范：**
+3. 其他XSS攻击防范：
 
 - Content Security Policy（CSP）
 - 输入内容长度控制，增加XSS攻击的难度。
@@ -1941,69 +1987,554 @@ chrome浏览器提供的**Audits**、 **Performance**
 
 
 
+## JS性能优化
+
+推荐阅读文章
+
+[[译] JavaScript 引擎基础：Shapes 和 Inline Caches](<https://hijiangtao.github.io/2018/06/17/Shapes-ICs/>)
+
+[WebAssembly 系列（二）JavaScript Just-in-time (JIT) 工作原理](<https://www.w3ctech.com/topic/2026>)
+
+JIT 是什么呢？它是使 JavaScript 运行更快的一种手段，通过监视代码的运行状态，把 `hot` 代码（重复执行多次的代码）进行优化。通过这种方式，可以使 JavaScript 应用的性能提升很多倍。
+
+为了使执行速度变快，JIT 会增加很多多余的开销，这些开销包括：
+
+- 优化和去优化开销
+- 监视器记录信息对内存的开销
+- 发生去优化情况时恢复信息的记录对内存的开销
+- 对基线版本和优化后版本记录的内存开销
+
+
+
+# 性能优化琐碎事
+
+> 该知识点属于性能优化领域。
+
+## 图片优化
+
+### 计算图片大小
+
+对于一张 100 * 100 像素的图片来说，图像上有 10000 个像素点，如果每个像素的值是 **RGBA** 存储的话，那么也就是说每个像素有 4 个通道，每个通道 1 个字节（8 位 = 1个字节），所以该图片大小大概为 39KB（10000 * 1 * 4 / 1024）。
+
+但是在实际项目中，一张图片可能并不需要使用那么多颜色去显示，我们可以通过减少每个像素的调色板来相应缩小图片的大小。
+
+了解了如何计算图片大小的知识，那么对于如何优化图片，想必大家已经有 2 个思路了：
+
+- **减少像素点**
+- **减少每个像素点能够显示的颜色**
+
+
+
+### 图片加载优化
+
+1. 不用图片。很多时候会使用到很多修饰类图片，其实这类修饰图片完全可以用 CSS 去代替。
+2. 对于移动端来说，屏幕宽度就那么点，完全没有必要去加载原图浪费带宽。一般图片都用 CDN 加载，可以计算出适配屏幕的宽度，然后去请求相应裁剪好的图片。
+3. 小图使用 base64 格式
+4. 将多个图标文件整合到一张图片中（雪碧图）
+5. 选择正确的图片格式：
+   - 对于能够显示 WebP 格式的浏览器尽量使用 WebP 格式。因为 WebP 格式具有更好的图像数据压缩算法，能带来更小的图片体积，而且拥有肉眼识别无差异的图像质量，缺点就是兼容性并不好
+   - 小图使用 PNG，其实对于大部分图标这类图片，完全可以使用 SVG 代替
+   - 照片使用 JPEG
+
+
+
+## DNS 预解析
+
+DNS 解析也是需要时间的，可以通过预解析的方式来预先获得域名所对应的 IP。
+
+```
+<link rel="dns-prefetch" href="//yuchengkai.cn">
+```
+
+
+
+## 防抖
+
+节流：用户工作时，我工作一段时间了，休息一会儿再接着工作(一段时间内只触发一次，用户动作不停，会间断的多次触发)；
+防抖：用户不工作一段时间了，我开始工作了(间隔一段时间才触发一次，用户动作不停就一直不触发)
+
+推荐阅读：[函数防抖与函数节流 By司徒正美](https://zhuanlan.zhihu.com/p/38313717)
+
+[前端战五渣学JavaScript——防抖、节流和rAF](https://zhuanlan.zhihu.com/p/64946941>)
+
+考虑一个场景，有一个按钮点击会触发网络请求，但是我们并不希望每次点击都发起网络请求，而是当用户点击按钮一段时间后没有再次点击的情况才去发起网络请求，对于这种情况我们就可以使用防抖。
+
+理解了防抖的用途，我们就来实现下这个函数
+
+```
+function debounce(fn, wait) {
+    var timeout = null;
+    return function() {
+        if(timeout !== null) 
+                clearTimeout(timeout);
+        timeout = setTimeout(fn, wait);
+    }
+}
+// 处理函数
+function handle() {
+    console.log(Math.random()); 
+}
+// 滚动事件
+window.addEventListener('scroll', debounce(handle, 1000));
+```
+
+
+
+## 节流
+
+考虑一个场景，滚动事件中会发起网络请求，但是我们并不希望用户在滚动过程中一直发起请求，而是隔一段时间发起一次，对于这种情况我们就可以使用节流。
+
+理解了节流的用途，我们就来实现下这个函数
+
+```
+var throttle = function(func, delay) {
+            var prev = Date.now();
+            return function() {
+                var context = this;
+                var args = arguments;
+                var now = Date.now();
+                if (now - prev >= delay) {
+                    func.apply(context, args);
+                    prev = Date.now();
+                }
+            }
+        }
+function handle() {
+    console.log(Math.random());
+}
+window.addEventListener('scroll', throttle(handle, 1000));
+```
 
 
 
 
 
+## 预加载
+
+在开发中，可能会遇到这样的情况。有些资源不需要马上用到，但是希望尽早获取，这时候就可以使用预加载。
+
+预加载其实是声明式的 `fetch` ，强制浏览器请求资源，并且不会阻塞 `onload` 事件，可以使用以下代码开启预加载
+
+```
+<link rel="preload" href="http://example.com">
+```
+
+预加载可以一定程度上降低首屏的加载时间，因为可以将一些不影响首屏但重要的文件延后加载，唯一缺点就是兼容性不好。
 
 
 
+## 预渲染
+
+可以通过预渲染将下载的文件预先在后台渲染，可以使用以下代码开启预渲染
+
+```
+<link rel="prerender" href="http://example.com"> 
+```
+
+预渲染虽然可以提高页面的加载速度，但是要确保该页面大概率会被用户在之后打开，否则就是白白浪费资源去渲染。
 
 
 
+## 懒执行
+
+懒执行就是将某些逻辑延迟到使用时再计算。该技术可以用于首屏优化，对于某些耗时逻辑并不需要在首屏就使用的，就可以使用懒执行。懒执行需要唤醒，一般可以通过定时器或者事件的调用来唤醒。
 
 
 
+## 懒加载
+
+懒加载就是将不关键的资源延后加载。
+
+懒加载的原理就是只加载自定义区域（通常是可视区域，但也可以是即将进入可视区域）内需要加载的东西。对于图片来说，先设置图片标签的 `src` 属性为一张占位图，将真实的图片资源放入一个自定义属性中，当进入自定义区域时，就将自定义属性替换为 `src` 属性，这样图片就会去下载资源，实现了图片懒加载。
+
+懒加载不仅可以用于图片，也可以使用在别的资源上。比如进入可视区域才开始播放视频等等。
 
 
 
+## CDN
+
+CDN 的原理是尽可能的在各个地方分布机房缓存数据，这样即使我们的根服务器远在国外，在国内的用户也可以通过国内的机房迅速加载资源。
+
+因此，我们可以将静态资源尽量使用 CDN 加载，由于浏览器对于单个域名有并发请求上限，可以考虑使用多个 CDN 域名。并且对于 CDN 加载静态资源需要注意 CDN 域名要与主站不同，否则每次请求都会带上主站的 Cookie，平白消耗流量。
 
 
 
+# Webpack 性能优化
+
+Webpack这部分，如何写配置文件，可以去官网学习。
+
+## 减少 Webpack 打包时间
+
+### 优化 Loader
+
+对于 Loader 来说，影响打包效率首当其冲必属 Babel 了。因为 Babel 会将代码转为字符串生成 AST，然后对 AST 继续进行转变最后再生成新的代码，项目越大，**转换代码越多，效率就越低**。当然了，我们是有办法优化的。
+
+首先我们可以**优化 Loader 的文件搜索范围**
+
+```
+module.exports = {
+  module: {
+    rules: [
+      {
+        // js 文件才使用 babel
+        test: /\.js$/,
+        loader: 'babel-loader',
+        // 只在 src 文件夹下查找
+        include: [resolve('src')],
+        // 不会去查找的路径
+        exclude: /node_modules/
+      }
+    ]
+  }
+}
+```
+
+对于 Babel 来说，我们肯定是希望只作用在 JS 代码上的，然后 `node_modules` 中使用的代码都是编译过的，所以我们也完全没有必要再去处理一遍。
+
+当然这样做还不够，我们还可以将 Babel 编译过的文件**缓存**起来，下次只需要编译更改过的代码文件即可，这样可以大幅度加快打包时间
+
+```
+loader: 'babel-loader?cacheDirectory=true'
+```
 
 
 
+### HappyPack
+
+受限于 Node 是单线程运行的，所以 Webpack 在打包的过程中也是单线程的，特别是在执行 Loader 的时候，长时间编译的任务很多，这样就会导致等待的情况。
+
+**HappyPack 可以将 Loader 的同步执行转换为并行的**，这样就能充分利用系统资源来加快打包效率了
+
+```
+module: {
+  loaders: [
+    {
+      test: /\.js$/,
+      include: [resolve('src')],
+      exclude: /node_modules/,
+      // id 后面的内容对应下面
+      loader: 'happypack/loader?id=happybabel'
+    }
+  ]
+},
+plugins: [
+  new HappyPack({
+    id: 'happybabel',
+    loaders: ['babel-loader?cacheDirectory'],
+    // 开启 4 个线程
+    threads: 4
+  })
+]
+```
 
 
 
+### DllPlugin
+
+**DllPlugin 可以将特定的类库提前打包然后引入**。这种方式可以极大的减少打包类库的次数，只有当类库更新版本才有需要重新打包，并且也实现了将公共代码抽离成单独文件的优化方案。
+
+接下来我们就来学习如何使用 DllPlugin
+
+```
+// 单独配置在一个文件中
+// webpack.dll.conf.js
+const path = require('path')
+const webpack = require('webpack')
+module.exports = {
+  entry: {
+    // 想统一打包的类库
+    vendor: ['react']
+  },
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: '[name].dll.js',
+    library: '[name]-[hash]'
+  },
+  plugins: [
+    new webpack.DllPlugin({
+      // name 必须和 output.library 一致
+      name: '[name]-[hash]',
+      // 该属性需要与 DllReferencePlugin 中一致
+      context: __dirname,
+      path: path.join(__dirname, 'dist', '[name]-manifest.json')
+    })
+  ]
+}
+```
+
+然后我们需要执行这个配置文件生成依赖文件，接下来我们需要使用 `DllReferencePlugin` 将依赖文件引入项目中
+
+```
+// webpack.conf.js
+module.exports = {
+  // ...省略其他配置
+  plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      // manifest 就是之前打包出来的 json 文件
+      manifest: require('./dist/vendor-manifest.json'),
+    })
+  ]
+}
+```
 
 
 
+### 代码压缩
+
+在 Webpack3 中，我们一般使用 `UglifyJS` 来压缩代码，但是这个是单线程运行的，为了加快效率，我们可以使用 `webpack-parallel-uglify-plugin` 来并行运行 `UglifyJS`，从而提高效率。
+
+在 Webpack4 中，我们就不需要以上这些操作了，只需要将 `mode` 设置为 `production` 就可以默认开启以上功能。代码压缩也是我们必做的性能优化方案，当然我们不止可以压缩 JS 代码，还可以压缩 HTML、CSS 代码，并且在压缩 JS 代码的过程中，我们还可以通过配置实现比如删除 `console.log` 这类代码的功能。
 
 
 
+### 一些小的优化点
+
+我们还可以通过一些小的优化点来加快打包速度
+
+- `resolve.extensions`：用来表明文件后缀列表，默认查找顺序是 `['.js', '.json']`，如果你的导入文件没有添加后缀就会按照这个顺序查找文件。我们应该尽可能减少后缀列表长度，然后将出现频率高的后缀排在前面
+- `resolve.alias`：可以通过别名的方式来映射一个路径，能让 Webpack 更快找到路径
+- `module.noParse`：如果你确定一个文件下没有其他依赖，就可以使用该属性让 Webpack 不扫描该文件，这种方式对于大型的类库很有帮助
 
 
 
+## 减少 Webpack 打包后的文件体积
+
+### 按需加载
+
+想必大家在开发 SPA 项目的时候，项目中都会存在十几甚至更多的路由页面。如果我们将这些页面全部打包进一个 JS 文件的话，虽然将多个请求合并了，但是同样也加载了很多并不需要的代码，耗费了更长的时间。那么为了首页能更快地呈现给用户，我们肯定是希望首页能加载的文件体积越小越好，**这时候我们就可以使用按需加载，将每个路由页面单独打包为一个文件**。当然不仅仅路由可以按需加载，对于 `loadash` 这种大型类库同样可以使用这个功能。
+
+按需加载的代码实现这里就不详细展开了，因为鉴于用的框架不同，实现起来都是不一样的。当然了，虽然他们的用法可能不同，但是底层的机制都是一样的。都是当使用的时候再去下载对应文件，返回一个 `Promise`，当 `Promise` 成功以后去执行回调。
 
 
 
+### Scope Hoisting
+
+**Scope Hoisting 会分析出模块之间的依赖关系，尽可能的把打包出来的模块合并到一个函数中去。**
+
+比如我们希望打包两个文件
+
+```
+// test.js
+export const a = 1
+// index.js
+import { a } from './test.js'
+```
+
+对于这种情况，我们打包出来的代码会类似这样
+
+```
+[
+  /* 0 */
+  function (module, exports, require) {
+    //...
+  },
+  /* 1 */
+  function (module, exports, require) {
+    //...
+  }
+]
+```
+
+但是如果我们使用 Scope Hoisting 的话，代码就会尽可能的合并到一个函数中去，也就变成了这样的类似代码
+
+```
+[
+  /* 0 */
+  function (module, exports, require) {
+    //...
+  }
+]
+```
+
+这样的打包方式生成的代码明显比之前的少多了。如果在 Webpack4 中你希望开启这个功能，只需要启用 `optimization.concatenateModules` 就可以了。
+
+```
+module.exports = {
+  optimization: {
+    concatenateModules: true
+  }
+}
+```
 
 
 
+### Tree Shaking
+
+**Tree Shaking 可以实现删除项目中未被引用的代码**，比如
+
+```
+// test.js
+export const a = 1
+export const b = 2
+// index.js
+import { a } from './test.js'
+```
+
+对于以上情况，`test` 文件中的变量 `b` 如果没有在项目中使用到的话，就不会被打包到文件中。
+
+如果你使用 Webpack 4 的话，开启生产环境就会自动启动这个优化功能。
 
 
 
+### 开启gzip压缩
 
 
 
+# React 和 Vue 两大框架
+
+## MVVM
+
+> 什么是 MVVM？比之 MVC 有什么区别？
+
+先说下 View 和 Model：
+
+- View 很简单，就是用户看到的视图
+- Model 同样很简单，一般就是本地数据和数据库中的数据
+
+基本上，我们写的产品就是通过接口从数据库中读取数据，然后将数据经过处理展现到用户看到的视图上。如何将数据展示到视图上，然后又如何将用户的输入写入到数据中，不同的人就产生了不同的看法，从此出现了很多种架构设计。
+
+传统的 MVC 架构通常是使用控制器更新模型，视图从模型中获取数据去渲染。当用户有输入时，会通过控制器去更新模型，并且通知视图进行更新。
+
+![mvc](mvvm1.png)
 
 
 
+但是 MVC 有一个巨大的缺陷就是**控制器承担的责任太大**了，随着项目愈加复杂，控制器中的代码会越来越**臃肿**，导致出现不利于**维护**的情况。
+
+在 MVVM 架构中，引入了 **ViewModel** 的概念。ViewModel 只关心数据和业务的处理，不关心 View 如何处理数据，在这种情况下，View 和 Model 都可以独立出来，任何一方改变了也不一定需要改变另一方，并且可以将一些可复用的逻辑放在一个 ViewModel 中，让多个 View 复用这个 ViewModel。
+
+![mvc](mvvm2.png)
+
+以 Vue 框架来举例，ViewModel 就是组件的实例。View 就是模板，Model 的话在引入 Vuex 的情况下是完全可以和组件分离的。
+
+除了以上三个部分，其实在 MVVM 中还引入了一个隐式的 Binder 层，实现了 View 和 ViewModel 的绑定。
+
+![mvc](mvvm3.png)
+
+同样以 Vue 框架来举例，这个**隐式**的 Binder 层就是 Vue 通过解析模板中的插值和指令从而实现 View 与 ViewModel 的绑定。
+
+对于 MVVM 来说，其实最重要的并不是通过双向绑定或者其他的方式将 View 与 ViewModel 绑定起来，**而是通过 ViewModel 将视图中的状态和用户的行为分离出一个抽象，这才是 MVVM 的精髓**。
 
 
 
+## Virtual DOM
+
+> 什么是 Virtual DOM？为什么 Virtual DOM 比原生 DOM 快？
+
+相较于 DOM 来说，操作 JS 对象会快很多，并且我们也可以通过 JS 来模拟 DOM。
+
+那么既然 DOM 可以通过 JS 对象来模拟，反之也可以通过 JS 对象来渲染出对应的 DOM。
+
+难点在于如何判断新旧两个 JS 对象的**最小差异**并且实现**局部更新** DOM。
+
+首先 DOM 是一个多叉树的结构，如果需要完整的对比两颗树的差异，那么需要的时间复杂度会是 O(n ^ 3)，这个复杂度肯定是不能接受的。于是 React 团队优化了算法，实现了 O(n) 的复杂度来对比差异。 实现 O(n) 复杂度的关键就是只对比同层的节点，而不是跨层对比，这也是考虑到在实际业务中很少会去跨层的移动 DOM 元素。 所以判断差异的算法就分为了两步
+
+- 首先从上至下，从左往右遍历对象，也就是树的深度遍历，这一步中会给每个节点添加索引，便于最后渲染差异
+- 一旦节点有子元素，就去判断子元素是否有不同
+
+在第一步算法中我们需要判断新旧节点的 `tagName` 是否相同，如果不相同的话就代表节点被替换了。如果没有更改 `tagName` 的话，就需要判断是否有子元素，有的话就进行第二步算法。
+
+在第二步算法中，我们需要判断原本的列表中是否有节点被移除，在新的列表中需要判断是否有新的节点加入，还需要判断节点是否有移动。
+
+那么在实际的算法中，我们如何去识别改动的是哪个节点呢？这就引入了 `key` 这个属性，想必大家在 Vue 或者 React 的列表中都用过这个属性。这个属性是用来给每一个节点打标志的，用于判断是否是同一个节点。
+
+当然在判断以上差异的过程中，我们还需要判断节点的属性是否有变化等等。
+
+当我们判断出以上的差异后，就可以把这些差异记录下来。当对比完两棵树以后，就可以通过差异去局部更新 DOM，实现性能的最优化。
+
+Virtual DOM 提高性能是其中一个优势，其实**最大的优势**还是在于：
+
+1. 将 Virtual DOM 作为一个兼容层，让我们还能对接非 Web 端的系统，实现跨端开发。
+2. 同样的，通过 Virtual DOM 我们可以渲染到其他的平台，比如实现 SSR、同构渲染等等。
+3. 实现组件的高度抽象化
 
 
 
+## 路由原理
+
+> 前端路由原理？两种实现方式有什么区别？
+
+前端路由实现起来其实很简单，本质就是**监听 URL 的变化**，然后匹配路由规则，显示相应的页面，并且无须刷新页面。目前前端使用的路由就只有两种实现方式
+
+- Hash 模式
+- History 模式
 
 
 
+### Hash 模式
+
+`www.test.com/#/` 就是 Hash URL，当 `#` 后面的哈希值发生变化时，可以通过 `hashchange` 事件来监听到 URL 的变化，从而进行跳转页面，并且无论哈希值如何变化，服务端接收到的 URL 请求永远是 `www.test.com`。
+
+```
+window.addEventListener('hashchange', () => {
+  // ... 具体逻辑
+})
+```
+
+Hash 模式相对来说更简单，并且兼容性也更好。
+
+### History 模式
+
+History 模式是 HTML5 新推出的功能，主要使用 `history.pushState` 和 `history.replaceState` 改变 URL。
+
+通过 History 模式改变 URL 同样不会引起页面的刷新，只会更新浏览器的历史记录。
+
+```
+// 新增历史记录
+history.pushState(stateObject, title, URL)
+// 替换当前历史记录
+history.replaceState(stateObject, title, URL)
+```
+
+当用户做出浏览器动作时，比如点击后退按钮时会触发 `popState` 事件
+
+```
+window.addEventListener('popstate', e => {
+  // e.state 就是 pushState(stateObject) 中的 stateObject
+  console.log(e.state)
+})
+```
+
+### 两种模式对比
+
+- Hash 模式只可以更改 `#` 后面的内容，History 模式可以通过 API 设置任意的同源 URL
+- History 模式可以通过 API 添加任意类型的数据到历史记录中，Hash 模式只能更改哈希值，也就是字符串
+- Hash 模式无需后端配置，并且兼容性好。History 模式在用户手动输入地址或者刷新页面的时候会发起 URL 请求，后端需要配置 `index.html` 页面用于匹配不到静态资源的时候
 
 
 
+## Vue 和 React 之间的区别
 
+Vue 的表单可以使用 `v-model` 支持双向绑定，相比于 React 来说开发上更加方便，当然了 `v-model` 其实就是个语法糖，本质上和 React 写表单的方式没什么区别。
+
+改变数据方式不同，Vue 修改状态相比来说要简单许多，React 需要使用 `setState` 来改变状态，并且使用这个 API 也有一些坑点。并且 Vue 的底层使用了依赖追踪，页面更新渲染已经是最优的了，但是 React 还是需要用户手动去优化这方面的问题。
+
+React 16以后，有些钩子函数会执行多次，这是因为引入 Fiber 的原因，这在后续的章节中会讲到。
+
+React 需要使用 JSX，有一定的上手成本，并且需要一整套的工具链支持，但是完全可以通过 JS 来控制页面，更加的灵活。Vue 使用了模板语法，相比于 JSX 来说没有那么灵活，但是完全可以脱离工具链，通过直接编写 `render` 函数就能在浏览器中运行。
+
+在生态上来说，两者其实没多大的差距，当然 React 的用户是远远高于 Vue 的。
+
+在上手成本上来说，Vue 一开始的定位就是尽可能的降低前端开发的门槛，然而 React 更多的是去改变用户去接受它的概念和思想，相较于 Vue 来说上手成本略高。
+
+
+
+推荐阅读：
+
+MVVM:
+
+[MVC、MVP 和 MVVM 对比笔记](https://segmentfault.com/a/1190000018675102)
+
+vitural DOM:
+
+[https://www.zhihu.com/question/61078310/answer/361261031](https://link.juejin.im/?target=https%3A%2F%2Fwww.zhihu.com%2Fquestion%2F61078310%2Fanswer%2F361261031)
+[https://blog.csdn.net/xukongjing1/article/details/81587549](https://link.juejin.im/?target=https%3A%2F%2Fblog.csdn.net%2Fxukongjing1%2Farticle%2Fdetails%2F81587549)
+[https://www.zhihu.com/question/61064119/answer/183717717](https://link.juejin.im/?target=https%3A%2F%2Fwww.zhihu.com%2Fquestion%2F61064119%2Fanswer%2F183717717)
+[https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/1](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2FAdvanced-Frontend%2FDaily-Interview-Question%2Fissues%2F1)
+[https://github.com/livoras/blog/issues/13](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Flivoras%2Fblog%2Fissues%2F13)
+[https://www.zhihu.com/question/280408565](https://link.juejin.im/?target=https%3A%2F%2Fwww.zhihu.com%2Fquestion%2F280408565)
+[https://www.jb51.net/article/160001.htm](https://link.juejin.im/?target=https%3A%2F%2Fwww.jb51.net%2Farticle%2F160001.htm)
 
 
 
@@ -2051,9 +2582,11 @@ keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 ke
 
 - 当我们使用 new Vue() 的方式的时候，无论我们将 data 设置为对象还是函数都是可以的，因为 new Vue() 的方式是生成一个根组件，该组件不会复用，也就不存在共享 data 的情况了。
 
+
+
 # Vue 常考进阶知识点
 
-# 响应式原理
+## 响应式原理
 
 在组件挂载时，会先对所有需要的属性调用 Object.defineProperty()，然后实例化 Watcher，传入组件更新的回调。在实例化过程中，会对模板中的属性进行求值，触发依赖收集。
 
@@ -2065,10 +2598,128 @@ keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 ke
 
 可以让我们在下次 DOM 更新循环结束之后执行延迟回调，用于获得更新后的 DOM。
 
+
+
 # 监控
 
-- 页面埋点
-- 性能监控
-  可以直接使用浏览器自带的 Performance API 来实现这个功能。
-- 只需要调用 performance.getEntriesByType('navigation')
-- 异常监控
+## 页面埋点
+
+一般起码会监控以下几个数据：
+
+- PV / UV
+- 停留时长
+- 流量来源
+- 用户交互
+
+对于这几类统计，一般的实现思路大致可以分为两种，分别为手写埋点和无埋点的方式。
+
+第一种方式也是大家最常用的方式，可以自主选择需要监控的数据然后在相应的地方写入代码。这种方式的灵活性很大，但是唯一的缺点就是工作量较大，每个需要监控的地方都得插入代码。
+
+另一种无埋点的方式基本不需要开发者手写埋点了，而是统计所有的事件并且定时上报。这种方式虽然没有前一种方式繁琐了，但是因为统计的是所有事件，所以还需要后期过滤出需要的数据。
+
+
+
+## 性能监控
+
+对于性能监控来说，我们可以直接使用浏览器自带的 [Performance API](https://link.juejin.im/?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FAPI%2FPerformance) 来实现这个功能。
+
+对于性能监控来说，其实我们只需要调用 `performance.getEntriesByType('navigation')` 这行代码就行了。
+
+
+
+## 异常监控
+
+### 代码报错
+
+对于代码运行错误，通常的办法是使用 `window.onerror` 拦截报错。该方法能拦截到大部分的详细报错信息，但是也有例外
+
+- 对于跨域的代码运行错误会显示 `Script error.` 对于这种情况我们需要给 `script` 标签添加 `crossorigin` 属性
+- 对于某些浏览器可能不会显示调用栈信息，这种情况可以通过 `arguments.callee.caller` 来做栈递归
+
+对于异步代码来说，可以使用 `catch` 的方式捕获错误。比如 `Promise` 可以直接使用 `catch` 函数，`async await` 可以使用 `try catch`。
+
+
+
+### 接口异常
+
+相对来说简单许多，可以列举出出错的状态码。一旦出现此类的状态码就可以立即上报出错。接口异常上报可以让开发人员迅速知道有哪些接口出现了大面积的报错，以便迅速修复问题。
+
+
+
+# UDP
+
+>  UDP 与 TCP 的区别是什么？
+
+首先 UDP 协议是面向无连接的，也就是说不需要在正式传递数据之前先连接起双方。然后 UDP 协议只是数据报文的搬运工，不保证有序且不丢失的传递到对端，并且UDP 协议也没有任何控制流量的算法，总的来说 UDP 相较于 TCP 更加的轻便。
+
+TCP 基本是和 UDP 反着来，建立连接断开连接都需要先需要进行握手。在传输数据的过程中，通过各种算法保证数据的可靠性，当然带来的问题就是相比 UDP 来说不那么的高效。
+
+## 面向无连接
+
+首先 UDP 是不需要和 TCP 一样在发送数据前进行三次握手建立连接的，想发数据就可以开始发送了。
+
+并且也只是数据报文的搬运工，不会对数据报文进行任何拆分和拼接操作。
+
+具体来说就是：
+
+- 在发送端，应用层将数据传递给传输层的 UDP 协议，UDP 只会给数据增加一个 UDP 头标识下是 UDP 协议，然后就传递给网络层了
+- 在接收端，网络层将数据传递给传输层，UDP 只去除 IP 报文头就传递给应用层，不会任何拼接操作
+
+
+
+## 不可靠性
+
+首先不可靠性体现在无连接上，通信都不需要建立连接，想发就发，这样的情况肯定不可靠。
+
+并且收到什么数据就传递什么数据，并且也不会备份数据，发送数据也不会关心对方是否已经正确接收到数据了。
+
+再者网络环境时好时坏，但是 UDP 因为没有拥塞控制，一直会以恒定的速度发送数据。即使网络条件不好，也不会对发送速率进行调整。这样实现的弊端就是在网络条件不好的情况下可能会导致丢包，但是优点也很明显，在某些实时性要求高的场景（比如电话会议）就需要使用 UDP 而不是 TCP。
+
+
+
+## 高效
+
+虽然 UDP 协议不是那么的可靠，但是正是因为它不是那么的可靠，所以也就没有 TCP 那么复杂了，需要保证数据不丢失且有序到达。
+
+因此 UDP 的头部开销小，只有八字节，相比 TCP 的至少二十字节要少得多，在传输数据报文时是很高效的。
+
+![img](udp.PNG)
+
+UDP 头部包含了以下几个数据
+
+- 两个十六位的端口号，分别为源端口（可选字段）和目标端口
+- 整个数据报文的长度
+- 整个数据报文的检验和（IPv4 可选 字段），该字段用于发现头部信息和数据中的错误
+
+
+
+## 传输方式
+
+UDP 不止支持一对一的传输方式，同样支持一对多，多对多，多对一的方式，也就是说 UDP 提供了单播，多播，广播的功能。
+
+
+
+## 适合使用的场景
+
+在很多实时性要求高的地方都可以看到 UDP 的身影。比如视频、直播、实时游戏等。
+
+
+
+# TCP
+
+## 头部
+
+![img](tcp.PNG)
+
+对于 TCP 头部来说，以下几个字段是很重要的
+
+- Sequence number，这个序号保证了 TCP 传输的报文都是有序的，对端可以通过序号顺序的拼接报文
+- Acknowledgement Number，这个序号表示数据接收端期望接收的下一个字节的编号是多少，同时也表示上一个序号的数据已经收到
+- Window Size，窗口大小，表示还能接收多少字节的数据，用于流量控制
+- 标识符
+  - URG=1：该字段为一表示本数据报的数据部分包含紧急信息，是一个高优先级数据报文，此时紧急指针有效。紧急数据一定位于当前数据包数据部分的最前面，紧急指针标明了紧急数据的尾部。
+  - ACK=1：该字段为一表示确认号字段有效。此外，TCP 还规定在连接建立后传送的所有报文段都必须把 ACK 置为一。
+  - PSH=1：该字段为一表示接收端应该立即将数据 push 给应用层，而不是等到缓冲区满后再提交。
+  - RST=1：该字段为一表示当前 TCP 连接出现严重问题，可能需要重新建立 TCP 连接，也可以用于拒绝非法的报文段和拒绝连接请求。
+  - SYN=1：当SYN=1，ACK=0时，表示当前报文段是一个连接请求报文。当SYN=1，ACK=1时，表示当前报文段是一个同意建立连接的应答报文。
+  - FIN=1：该字段为一表示此报文段是一个释放连接的请求报文。
