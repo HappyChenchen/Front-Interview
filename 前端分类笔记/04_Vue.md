@@ -139,6 +139,8 @@ obj: 是被代理完成之后返回的对象。
 
 ## vuex
 
+[从头开始学习Vuex](https://github.com/ljianshu/Blog/issues/36#)
+
 - store用来存储公共的状态
 - mutation用来提交修改
 - action用来定义修改的逻辑
@@ -151,4 +153,3 @@ obj: 是被代理完成之后返回的对象。
 - css-loader与style-loader
   - css-loader是加载文件中的require的css文件，而style-loader用于将文件中的css样式加载添加在js文件的head标签中
 
-### 
