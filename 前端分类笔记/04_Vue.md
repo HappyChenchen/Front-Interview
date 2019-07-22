@@ -112,8 +112,6 @@ obj: 是被代理完成之后返回的对象。
 
 ## Vue生命周期
 
-#### vue的生命周期
-
 - vue.init()初始化创建一个实例
 - beforecreate，这个时候el还没有挂载，data也没有初始化，可以添加一些loading事件
 - created，这个时候el还没有挂载，但是data已经初始化了，可以结束loading事件，发出ajax请求等
@@ -128,8 +126,6 @@ obj: 是被代理完成之后返回的对象。
 
 ## vue-router的原理
 
-#### vue-router的原理
-
 - vue-router的实现依赖的是hashChange或H5的history模式，使得路由更新的时候，能够不重新渲染页面，更新对应的组件，具体来说：
 - 首先我们在使用的时候需要Vue.use(vueRouter),在这一步调用的是install方法，在这个方法中做了三件事情，第一是安装了vue-router插件，第二是定义`this.$router`和`this.$route`两个变量来使得每个组件都可以访问路由列表，第三是注册了router-view和router-link两个组件，其中router-view就是获取到路由匹配的对应组件，render渲染，router-link就是注册click事件，触发路由的更新
 - 其次是我们在使用的时候需要新建一个VueRouter实例，在这一步中做了两件事情，其一是生成了路由的匹配表，将每个组件和对应的路由地址匹配好，第二是根据定义的模式生成对应的history实例
@@ -141,10 +137,24 @@ obj: 是被代理完成之后返回的对象。
 
 [从头开始学习Vuex](https://github.com/ljianshu/Blog/issues/36#)
 
-- store用来存储公共的状态
-- mutation用来提交修改
-- action用来定义修改的逻辑
-- getter用来过滤数据
+- 定义：对 vue 应用中多个组件的共享状态进行集中式的管理(读/写)
+  - store用来存储公共的状态
+  - mutation用来提交修改
+  - action用来定义修改的逻辑
+  - getter用来过滤数据
+
+
+
+### Vue计算属性和侦听属性
+
+- computed 计算属性是自动监听依赖值的变化，从而动态返回内容，监听是一个过程，在监听的值变化时，可以触发一个回调，并做一些事情。
+- watch中可以执行任何逻辑，如函数节流，Ajax异步获取数据，甚至操作 DOM（不建议）
+- 区别
+  - watch：监测的是属性值， 只要属性值发生变化，其都会触发执行回调函数来执行一系列操作。
+  - computed：监测的是依赖值，依赖值不变的情况下其会直接读取缓存进行复用，变化的情况下才会重新计算。
+  - 计算属性适合用在模板渲染中，某个值是依赖了其它的响应式对象甚至是计算属性计算而来；而侦听属性适用于观测某个值的变化去完成一段复杂的业务逻辑。
+    - computed能做的，watch都能做，反之则不行
+    - 能用computed的尽量用computed
 
 
 
@@ -152,4 +162,6 @@ obj: 是被代理完成之后返回的对象。
 
 - css-loader与style-loader
   - css-loader是加载文件中的require的css文件，而style-loader用于将文件中的css样式加载添加在js文件的head标签中
+
+
 

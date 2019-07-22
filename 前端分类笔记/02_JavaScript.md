@@ -77,3 +77,31 @@
     - IE8之前：event.returnValue = false;
     - IE8之后：event.preventDefault();
 
+
+
+## 跨域：
+
+- 跨域产生的原因是由于浏览器出于自身的安全考虑，他限制ajax请求的发送，DOM节点的获取，cookie的获取等必须要符合同源策略，所谓同源指的就是端口、域名、协议都一样，才会被认为同源
+
+- 跨域的解决方法大概有cors,jsonp,代理这几种
+
+  - jsonp：原理就是依赖script标签之间的传递没有同源策略的限制；前端动态创建一个script标签，src中定义一个回调函数，在后端获取到回调函数后，将数据包裹在回调函数中传回
+  - cors：原理就是在后端设置Access-Control-Allow-Origin来使得浏览器支持跨域的数据响应。
+  - 代理：webpack中设置proxytable，设置代理，利用的是服务器之间的传递也没有同源策略的限制。
+
+- ws
+
+  ```
+  var ws = new WebSocket(url)
+  ws.onopen = function(){
+    ws.send(message)
+  }
+  ws.onclose = function(event){
+    event.code
+    event.reason
+  }
+  ws.onmessage = function(event){
+    event.data
+  }
+  ```
+
