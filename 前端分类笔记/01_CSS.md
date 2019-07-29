@@ -8,9 +8,9 @@
 
 [front-end-interview-handbook](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fyangshun%2Ffront-end-interview-handbook%2Fblob%2Fmaster%2FTranslations%2FChinese%2Fquestions%2Fcss-questions.md)
 
-## 
+##
 
-## css
+## CSS
 
 - position
 
@@ -22,43 +22,48 @@
 
 - float:浮动定位
 
-  - 脱离文档流，元素会变成inline-block，会导致高度塌陷，造成布局混乱
+  - 脱离文档流，元素会变成inline-block，会导致高度塌陷，造成布局混乱。
 
   - 清除浮动
 
-    - 给所有元素都加上float标签，显然是不现实的
-
-    - 给浮动的父元素加上overflow：hidden
+    - 给浮动元素的子元素添加高度，扩展性不好。
 
     - 给影响的元素加上clear:both来清除浮动
 
-    - 给浮动元素后添加空元素，style设为clear：both来清除浮动
-
-    - 给浮动元素使用伪元素after清除浮动
+    - 给浮动元素的父元素，使用伪元素:after清除浮动（推荐）
 
       ```
-      .clearFloat{
+    .clearFloat{
         zoom:1
-      }
+    }
       .clearFloat{
         content:'.';
         height:0;
+        clear: both;
         display:block;
         clear:both;
         visibility:hidden;
       }
       ```
+    
+    - 给浮动的父元素加上overflow：hidden
+    
+    - br标签清浮动
+    
+      
 
 - BFC:
 
   - 生成BFC的条件是
-    - display:inline-block
-    - float
-    - position绝对定位
-    - overflow:hidden,auto,scroll
+    - float为 left|right
+    - overflow为 hidden|auto|scroll
+    - display为 table-cell|table-caption|inline-block|inline-flex|flex
+    - position为 absolute|fixed
+    - 根元素
   - 作用：为元素生成一个块级上下文，将元素包裹起来不受外部的影响
     - 清除浮动
-    - 防止文字环绕
+    - 防止文字环绕、自适应两栏布局
+    - 阻止垂直外边距重叠
 
 - 行内元素与块级元素
 
@@ -97,3 +102,16 @@
     - canvas，svg
     - article，header, footer, section, nav, aside
     - localStorage, SessionStorage
+  
+- LESS/SCSS
+
+  - 在传统的CSS基础上增加了大量的新的语法，编写方式，常用的函数等
+  - LESS的基础语法基本上分为：变量、混合(Mixins)、嵌套规则、运算、函数、作用域等。
+  - SCSS <https://www.kaops.com/iv/1000>
+
+
+
+## 响应式布局
+
+
+
