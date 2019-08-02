@@ -10,12 +10,19 @@
   <meta name="description" content="前端学习笔记">
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/buble.css">
   <link rel="stylesheet" href="//unpkg.com/prismjs/themes/prism.css">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
   <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <style>
+    .markdown-section h2 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin: 0 0 0.5rem;
+      padding: 2rem 0 0;
+    }
+
     .markdown-section p {
       margin: 0
     }
@@ -23,21 +30,36 @@
 
     .markdown-section ul {
       padding-left: 1rem;
-      margin: 0 0 1.5rem 0px !important;
+      margin: 0.2rem !important;
     }
 
     .markdown-section ol {
-      margin: 0 0 1.5rem 0px !important;
+      margin: 0.2rem !important;
     }
 
     .markdown-section pre>code {
       padding: 0px
     }
 
-    article>ul>li,
-    article>ol>li article blockquote>ul>li,
-    article blockquote>ol>li {
-      margin: 0px
+    .markdown-section pre>code {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .sidebar .sidebar-nav {
+      line-height: 2em;
+      padding-bottom: 40px;
+      padding-left: 30px;
+    }
+
+    .sidebar ul,
+    .sidebar ul li {
+      list-style: decimal;
+    }
+
+    .markdown-section h3 {
+      font-size: 1.4rem;
+      margin: 0.8rem 0 0.8rem;
     }
 
     .app-sub-sidebar li::before {
@@ -48,6 +70,29 @@
       min-width: 100px;
     }
 
+    .markdown-section h4 {
+      font-size: 1.25rem;
+      margin: 1rem 0rem 0.3rem 0rem;
+    }
+
+    .markdown-section h5 {
+      font-size: 1rem;
+      margin: 0.3rem 0 0.3rem 0px;
+    }
+
+    .markdown-section li {
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3,
+    .markdown-section h4,
+    .markdown-section strong {
+      color: #333;
+      font-weight: 600;
+    }
 
     article blockquote>p,
     .docsify-tabs__content>p {

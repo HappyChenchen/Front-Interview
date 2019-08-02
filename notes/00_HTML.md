@@ -1,5 +1,5 @@
 
-## HTML与H5的区别：
+## HTML与H5的区别
 
 1. 旧版本的html依赖浏览器的插件，比如flash。
 2. h5不再基于SGML，所以文档声明类型只有一种。
@@ -13,13 +13,18 @@
 
 三种：怪异模式、接近标准模式、标准模式
 
-怪异模式：触发IE盒模型；font-size不会被继承；颜色必须#十六进制；元素左右外边距自动，但并不水平居中；内容超出容器，会拉伸而不是溢出；
+怪异模式：
+
+- 触发IE盒模型；font-size不会被继承；
+- 颜色必须#十六进制；
+- 元素左右外边距自动，但并不水平居中；
+- 内容超出容器，会拉伸而不是溢出；
 
  
 
-## HTML元素分类：
+## HTML元素分类
 
-**块级元素:**
+**块级元素：**
 
 address、center、h123456、hr、p、pre、blockquote、marquee、ul、ol、dl、table、form、div
 
@@ -28,11 +33,9 @@ address、center、h123456、hr、p、pre、blockquote、marquee、ul、ol、dl�
 - 宽度没有设置时，默认为100%
 - 块级元素中可以包含块级元素和行内元素
 
-**行内元素**
+**行内元素：**
 
-span、a、br、b、strong、img 、sup、sub、i、em、del、u、
-
-input、textarea、select
+span、a、br、b、strong、img 、sup、sub、i、em、del、u、input、textarea、select
 
 - 和其他元素在一行中；
 - 高度、宽度以及内外边距都是不可控的
@@ -59,19 +62,18 @@ onclick()，javascript:alert('test')
 
  
 
-## meta元素：
+## meta元素
 
 - charset  字符编码
 - name 描述信息 author、viewport等
-- http-equiv 模拟首部 content-type、default-style、refresh(重载、
-- 重定向)
+- http-equiv 模拟首部 content-type、default-style、refresh(重载、重定向）
 - content
 
  
 
 ## 超链接：
 
-href： _self   _blank   _parent  _top
+href： _self   _blank   _parent  _to
 
 
 
