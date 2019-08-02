@@ -1,13 +1,11 @@
-# 
 
 ## HTML与H5的区别：
 
 1. 旧版本的html依赖浏览器的插件，比如flash。
 2. h5不再基于SGML，所以文档声明类型只有一种。
 3. h5消除了过时冗余的元素，例如font,center等。
-4. h5新增了很多语义化元素，比如article、header、figure等，还有新功能video、canvas等。
-              好处：结构清晰，可读性更强；促进无障碍访问；改善SEO。
-5. h5指定了很多新的全局属性和元素属性，比如全局属性draggable、contenteditable等，比如元素属性accept、placeholder等。
+4. h5新增了很多语义化元素，比如article、header、figure等，还有新功能video、canvas等。好处是结构清晰，可读性更强；促进无障碍访问；改善SEO。
+5.  h5指定了很多新的全局属性和元素属性，比如全局属性draggable、contenteditable等，比如元素属性accept、placeholder等。
 
  
 
@@ -42,12 +40,6 @@ input、textarea、select
 - 行内元素只能行内元素，不能包含块级元素
 
  
-
-## CSS样式
-
-优先级：内联>内嵌=外部
-
-
 
 ## 嵌入JS
 
@@ -92,16 +84,6 @@ href： _self   _blank   _parent  _top
 - script元素放在iframe之前，会阻塞iframe中资源的请求。
 - 容易制造点击劫持。
 
- 
 
-## 多媒体：
-
-video、audio、embed、track
-
- 
-
-## 绘图：
-
-canvas、svg
 
  

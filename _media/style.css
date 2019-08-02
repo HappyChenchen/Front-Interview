@@ -1,0 +1,23 @@
+.markdown-section p {
+  margin: 0
+}
+
+
+.markdown-section ul {
+  padding-left: 1rem;
+  margin: 0 0 1.5rem 0px !important;
+}
+
+.markdown-section ol {
+  margin: 0 0 1.5rem 0px !important;
+}
+
+.markdown-section pre>code {
+  padding: 0px
+}
+
+article>ul>li,
+article>ol>li article blockquote>ul>li,
+article blockquote>ol>li {
+  margin: 0px
+}
