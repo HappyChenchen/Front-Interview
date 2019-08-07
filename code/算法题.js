@@ -98,4 +98,3 @@ function reduce(callback, initValue) {
   return previous;
 }
 
-console.log(NaN == NaN);
