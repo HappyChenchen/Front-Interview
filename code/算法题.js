@@ -35,7 +35,6 @@ function deleteACB(str) {
   }
   return arr.join("");
 }
-console.log(deleteACB("abc"));
 
 //前序、中序还原二叉树
 function reConStructBinaryTree(pre, vin) {
@@ -98,3 +97,33 @@ function reduce(callback, initValue) {
   return previous;
 }
 
+
+//用 JavaScript 写一个函数，输入 int 型，返回整数逆序后的字符串。如：输入整型 1234，返回字符串“4321”。要求必须使用递归函数调用，不能用全局变量，输入函数必须只有一个参数传入，必须返回字符串。
+function func(v, r = "") {
+  v += "";
+  if (v.length < 1) return r;
+  r += v.slice(v.length - 1);
+  v = v.slice(0, v.length - 1);
+  return func(v, r);
+}
+console.log(func(1234));
+// "4321"
+
+//将数组扁平化并去除其中重复数据，最终得到一个升序且不重复的数组
+// var old_arr = [
+//   [1, 2, 2],
+//   [3, 4, 5, 5],
+//   [6, 7, 8, 9, [11, 12, [12, 13, [14]]]],
+//   10
+// ];
+
+// // 数组拍平
+// var level_arr = old_arr.flat(4);
+
+// //数组去重
+// var Distinct = Array.from(new Set(level_arr));
+
+// // 排序
+// var sort = Distinct.sort((a, b) => a - b);
+
+// console.log("new arr", sort);
