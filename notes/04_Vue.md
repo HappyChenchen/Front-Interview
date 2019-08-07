@@ -1,4 +1,4 @@
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Vue双向绑定原理，手写数据劫持
+> ## Vue双向绑定原理，手写数据劫持
 
 参考：<https://www.cnblogs.com/tugenhua0707/p/10306793.html>
 
@@ -110,7 +110,7 @@ obj: 是被代理完成之后返回的对象。
 
 
 
-## Vue生命周期
+> ## Vue生命周期
 
 - vue.init()初始化创建一个实例
 - beforecreate，这个时候el还没有挂载，data也没有初始化，可以添加一些loading事件
@@ -124,7 +124,7 @@ obj: 是被代理完成之后返回的对象。
 
 
 
-## vue-router的原理
+> ## vue-router的原理
 
 - vue-router的实现依赖的是hashChange或H5的history模式，使得路由更新的时候，能够不重新渲染页面，更新对应的组件，具体来说：
 - 首先我们在使用的时候需要Vue.use(vueRouter),在这一步调用的是install方法，在这个方法中做了三件事情，第一是安装了vue-router插件，第二是定义`this.$router`和`this.$route`两个变量来使得每个组件都可以访问路由列表，第三是注册了router-view和router-link两个组件，其中router-view就是获取到路由匹配的对应组件，render渲染，router-link就是注册click事件，触发路由的更新
@@ -133,7 +133,7 @@ obj: 是被代理完成之后返回的对象。
 
 
 
-## vuex
+> ## vuex
 
 [从头开始学习Vuex](https://github.com/ljianshu/Blog/issues/36#)
 
@@ -147,7 +147,7 @@ obj: 是被代理完成之后返回的对象。
 
 
 
-## Vue计算属性和侦听属性
+> ## Vue计算属性和侦听属性
 
 - computed 计算属性是自动监听依赖值的变化，从而动态返回内容，监听是一个过程，在监听的值变化时，可以触发一个回调，并做一些事情。
 - watch中可以执行任何逻辑，如函数节流，Ajax异步获取数据，甚至操作 DOM（不建议）
@@ -160,14 +160,14 @@ obj: 是被代理完成之后返回的对象。
 
 
 
-## webpack
+> ## webpack
 
 - css-loader与style-loader
   - css-loader是加载文件中的require的css文件，而style-loader用于将文件中的css样式加载添加在js文件的head标签中
 
 
 
-## 虚拟DOM
+> ## 虚拟DOM
 
 首先需要明确的是虚拟DOM的出现是为了有效解决DOM更新开销、重排、重绘这些问题。
 
@@ -204,7 +204,7 @@ VirtualDOM最具价值的核心功能是如何识别并保存新旧节点数据�
 
 
 
-## SSR
+> ##  SSR
 
 ### 定义：
 

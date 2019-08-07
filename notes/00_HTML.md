@@ -1,5 +1,4 @@
-
-## HTML与H5的区别：
+> ## HTML与H5的区别：
 
 1. 旧版本的html依赖浏览器的插件，比如flash。
 2. h5不再基于SGML，所以文档声明类型只有一种。
@@ -8,8 +7,7 @@
 5.  h5指定了很多新的全局属性和元素属性，比如全局属性draggable、contenteditable等，比如元素属性accept、placeholder等。
 
  
-
-## 浏览器渲染模式
+> ## 浏览器渲染模式
 
 三种：怪异模式、接近标准模式、标准模式
 
@@ -17,7 +15,7 @@
 
  
 
-## HTML元素分类：
+> ## HTML元素分类：
 
 **块级元素:**
 
@@ -41,7 +39,7 @@ input、textarea、select
 
  
 
-## 嵌入JS
+> ## 嵌入JS
 
 **内联：**
 
@@ -59,7 +57,7 @@ onclick()，javascript:alert('test')
 
  
 
-## meta元素：
+> ## meta元素：
 
 - charset  字符编码
 - name 描述信息 author、viewport等
@@ -69,13 +67,13 @@ onclick()，javascript:alert('test')
 
  
 
-## 超链接：
+> ## 超链接：
 
 href： _self   _blank   _parent  _top
 
 
 
-## iframe:
+> ## iframe:
 
 缺点：
 
