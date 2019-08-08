@@ -116,13 +116,15 @@ var old_arr = [
   10
 ];
 
-// 数组拍平
-var level_arr = old_arr.flat(4);
+// // 数组拍平
+// var level_arr = old_arr.flat(4);
 
-//数组去重
-var Distinct = Array.from(new Set(level_arr));
+// //数组去重
+// var Distinct = Array.from(new Set(level_arr));
 
-// 排序
-var sort = Distinct.sort((a, b) => a - b);
+// // 排序
+// var sort = Distinct.sort((a, b) => a - b);
 
-console.log("new arr", sort);
+// console.log("new arr", sort);
+
+console.log(...new Set(old_arr));
