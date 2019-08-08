@@ -1,4 +1,7 @@
-# 前端学习笔记
+## 前端学习笔记
+
+个人学习笔记，包含分类笔记和面经分享。
+
 - [HTML](notes/00_HTML.md)
 
 - [CSS](notes/01_CSS.md)
@@ -8,8 +11,10 @@
 - [ES6](notes/03_ES6.md)
 
 - [Vue](notes/04_Vue.md)
-  
-- [浏览器](notes/05_浏览器.md)
+
+- [Webpack](notes/05_webpack.md)
+
+- [浏览器](notes/06_浏览器.md)
 
 - [网络](notes/07_网络.md)
 
