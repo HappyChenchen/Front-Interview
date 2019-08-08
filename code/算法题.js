@@ -109,12 +109,12 @@ console.log(func(1234));
 // "4321"
 
 //将数组扁平化并去除其中重复数据，最终得到一个升序且不重复的数组
-var old_arr = [
-  [1, 2, 2],
-  [3, 4, 5, 5],
-  [6, 7, 8, 9, [11, 12, [12, 13, [14]]]],
-  10
-];
+// var old_arr = [
+//   [1, 2, 2],
+//   [3, 4, 5, 5],
+//   [6, 7, 8, 9, [11, 12, [12, 13, [14]]]],
+//   10
+// ];
 
 // // 数组拍平
 // var level_arr = old_arr.flat(4);
@@ -126,5 +126,3 @@ var old_arr = [
 // var sort = Distinct.sort((a, b) => a - b);
 
 // console.log("new arr", sort);
-
-console.log(...new Set(old_arr));
