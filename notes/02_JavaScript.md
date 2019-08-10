@@ -138,6 +138,8 @@
 
 ## 原型链
 
+https://www.jianshu.com/p/dee9f8b14771
+
 - 首先说一下原型链的含义：每个构造函数都拥有一个prototype属性，这个属性指向一个原型对象，而这个原型对象拥有一个constructor属性，这个属性指向原构造函数。当我们为构造函数创造一个实例的时候，实例就会拥有一个prototype属性，该属性指向构造函数的原型对象，这样就构造了一个链式，就被称为原型链
 - 原型链通常被用于实现属性和方法的继承。因为构造函数的原型中定义的方法是可以共享的。比如我们最常用的构造函数和原型组合的继承方式就是在超类构造函数中定义共享的属性，利用原型定义共享的方法，在子类中引用超类，同时将子类的原型赋予给超类的实例，这样就实现了子类对超类的继承
 - 此外还可以根据原型上定义的方法是共享的这个特性，我们可以定义一些函数，或者数组共享的API，比如我们可以在JS中通过Function.prototype.bind定义一个显式绑定this指向的bind方法，来让所有函数共享
@@ -216,3 +218,108 @@
 
   - 函数库lodash
   
+
+
+
+## 函数柯里化
+
+### 定义：
+
+把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术
+
+### 代码:
+
+```
+// 普通的add函数
+function add(x, y) {
+  return x + y;
+}
+
+// Currying后
+function curryingAdd(x) {
+  return function(y) {
+    return x + y;
+  };
+}
+
+add(1, 2); // 3
+curryingAdd(1)(2); // 3
+
+```
+
+### 优点：
+
+1. 参数复用
+
+2. 提前确认
+
+3. 延迟运行
+
+   ```
+   Function.prototype.bind = function (context) {
+       var _this = this
+       var args = Array.prototype.slice.call(arguments, 1)
+    
+       return function() {
+           return _this.apply(context, args)
+       }
+   }
+   ```
+
+### 通用的封装方法：
+
+```
+// 支持多参数传递
+function progressCurrying(fn, args) {
+
+    var _this = this
+    var len = fn.length;
+    var args = args || [];
+
+    return function() {
+        var _args = Array.prototype.slice.call(arguments);
+        Array.prototype.push.apply(args, _args);
+
+        // 如果参数个数小于最初的fn.length，则递归调用，继续收集参数
+        if (_args.length < len) {
+            return progressCurrying.call(_this, fn, _args);
+        }
+
+        // 参数收集完毕，则执行fn
+        return fn.apply(this, _args);
+    }
+}
+```
+
+经典面试题：
+
+```
+// 实现一个add方法，使计算结果能够满足如下预期：
+add(1)(2)(3) = 6;
+add(1, 2, 3)(4) = 10;
+add(1)(2)(3)(4)(5) = 15;
+
+function add() {
+    // 第一次执行时，定义一个数组专门用来存储所有的参数
+    var _args = Array.prototype.slice.call(arguments);
+
+    // 在内部声明一个函数，利用闭包的特性保存_args并收集所有的参数值
+    var _adder = function() {
+        _args.push(...arguments);
+        return _adder;
+    };
+
+    // 利用toString隐式转换的特性，当最后执行时隐式转换，并计算最终的值返回
+    _adder.toString = function () {
+        return _args.reduce(function (a, b) {
+            return a + b;
+        });
+    }
+    return _adder;
+}
+
+add(1)(2)(3)                // 6
+add(1, 2, 3)(4)             // 10
+add(1)(2)(3)(4)(5)          // 15
+add(2, 6)(1)                // 9
+```
