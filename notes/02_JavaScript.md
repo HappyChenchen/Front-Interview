@@ -25,6 +25,36 @@
   - constructor：constructor检测 Object与instanceof不一样，还可以处理基本数据类型的检测。但是无法检测null、undefined，而且对函数的constructor不准确，把类的原型进行重写，在重写的过程中很有可能出现把之前的constructor给覆盖了。
   
   - Object.prototype.toString.call()：**最准确最常用的方式**，会转换为[object Array]、[object Date]这种形式。
+  
+  - 总结：
+  
+  - 基本类型(`null`): 使用 `String(null)`
+  
+    基本类型(`string / number / boolean / undefined`) + `function`: 直接使用 `typeof`即可
+  
+    其余引用类型(`Array / Date / RegExp Error`): 调用`toString`后根据`[object XXX]`进行判断
+  
+  - ```
+    let class2type = {}
+    'Array Date RegExp Object Error'.split(' ').forEach(e => class2type[ '[object ' + e + ']' ] = e.toLowerCase()) 
+    
+    function type(obj) {
+        if (obj == null) return String(obj)
+        return typeof obj === 'object' ? class2type[ Object.prototype.toString.call(obj) ] || 'object' : typeof obj
+    }
+    ```
+  
+    
+
+```
+let class2type = {}
+'Array Date RegExp Object Error'.split(' ').forEach(e => class2type[ '[object ' + e + ']' ] = e.toLowerCase()) 
+
+function type(obj) {
+    if (obj == null) return String(obj)
+    return typeof obj === 'object' ? class2type[ Object.prototype.toString.call(obj) ] || 'object' : typeof obj
+}
+```
 
 
 
@@ -66,11 +96,10 @@
 
 +号
 
-- 先来看一条在js里的隐式的rule，js在进行加法运算的时候， 会先推测两个操作数是不是number。 
-- 如果是，则直接相加得出结果。 
-  如果其中有一个操作数为string，则将另一个操作数隐式的转换为string，然后进行字符串拼接得出结果。 
-  如果操作数为对象或者是数组这种复杂的数据类型，那么就将两个操作数都转换为字符串，进行拼接 
-- 如果操作数是像boolean这种的简单数据类型，那么就将操作数转换为number相加得出结果
+- 数字 + 字符串 = 字符串， 运算顺序是从左到右
+- 数字 + 对象， 优先调用对象的`valueOf` -> `toString`
+- 数字 + `boolean/null` -> 数字
+- 数字 + `undefined` -> `NaN`
 
 
 
@@ -204,15 +233,16 @@ https://www.jianshu.com/p/dee9f8b14771
 
 ## 深拷贝与浅拷贝
 
-- 浅拷贝：拷贝地址
+- 浅拷贝： 以赋值的形式拷贝引用对象，仍指向同一个地址，**修改时原对象也会受到影响**
 
   - Object.assign()  (当object只有一层的时候，是深拷贝)
   - Array.prototype.concat()
   - Array.prototype.slice()
+  - 展开运算符(...)
 
-- 深拷贝：创建新的内存，递归属性复制
+- 深拷贝：完全拷贝一个新对象，**修改时原对象不再受到任何影响**
 
-  - JSON.parse(JSON.stringify())，这种方法虽然可以实现数组或对象深拷贝,但不能处理函数
+  - `JSON.parse(JSON.stringify(obj))`: 性能最快具有循环引用的对象时，报错当值为函数、undefined、或symbol时，无法拷贝
 
   - 手写递归方法
 
@@ -323,3 +353,167 @@ add(1, 2, 3)(4)             // 10
 add(1)(2)(3)(4)(5)          // 15
 add(2, 6)(1)                // 9
 ```
+
+
+
+## new运算符的执行过程
+
+- 新生成一个对象
+- 链接到原型: `obj.__proto__ = Con.prototype`
+- 绑定this: `apply`
+- 返回新对象(如果构造函数有自己 retrun 时，则返回该值)
+
+
+
+## 代码的复用
+
+当你发现任何代码开始写第二遍时，就要开始考虑如何复用。一般有以下的方式:
+
+- 函数封装
+- 继承
+- 复制`extend`
+- 混入`mixin`
+- 借用`apply/call`
+
+
+
+## 继承
+
+在 JS 中，继承通常指的便是 **原型链继承**，也就是通过指定原型，并可以通过原型链继承原型上的属性或者方法。
+
+- 最优化: **圣杯模式**
+
+```
+var inherit = (function(c,p){
+	var F = function(){};
+	return function(c,p){
+		F.prototype = p.prototype;
+		c.prototype = new F();
+		c.uber = p.prototype;
+		c.prototype.constructor = c;
+	}
+})();
+复制代码
+```
+
+- 使用 ES6 的语法糖 `class / extends`
+
+
+
+## 模块化
+
+**在浏览器中使用 ES6 的模块化支持，在 Node 中使用 commonjs 的模块化支持。**
+
+分类:
+
+- es6: `import / export`
+- commonjs: `require / module.exports / exports`
+- amd: `require / defined`
+
+`require`与`import`的区别
+
+- `require`支持 **动态导入**，`import`不支持，正在提案 (babel 下可支持)
+- `require`是 **同步** 导入，`import`属于 **异步** 导入
+- `require`是 **值拷贝**，导出值变化不会影响导入值；`import`指向 **内存地址**，导入值会随导出值而变化
+
+
+
+## ES6/ES7
+
+1. 声明
+   - `let / const`: 块级作用域、不存在变量提升、暂时性死区、不允许重复声明
+   - `const`: 声明常量，无法修改
+
+2. 解构赋值
+
+3. `class / extend`: 类声明与继承
+
+4. `Set / Map`: 新的数据结构
+
+5. 异步解决方案:
+   - `Promise`的使用与实现
+
+   - `generator`:
+
+     - `yield`: 暂停代码
+     - `next()`: 继续执行代码
+
+     ```
+     function* helloWorld() {
+       yield 'hello';
+       yield 'world';
+       return 'ending';
+     }
+     
+     const generator = helloWorld();
+     
+     generator.next()  // { value: 'hello', done: false }
+     
+     generator.next()  // { value: 'world', done: false }
+     
+     generator.next()  // { value: 'ending', done: true }
+     
+     generator.next()  // { value: undefined, done: true }
+     ```
+
+   - `await / async`: 是`generator`的语法糖， babel中是基于`promise`实现。
+
+     ```
+     async function getUserByAsync(){
+        let user = await fetchUser();
+        return user;
+     }
+     
+     const user = await getUserByAsync()
+     console.log(user)
+     ```
+
+     
+
+## AST
+
+**抽象语法树 (Abstract Syntax Tree)**，是将代码逐字母解析成 **树状对象** 的形式。这是语言之间的转换、代码语法检查，代码风格检查，代码格式化，代码高亮，代码错误提示，代码自动补全等等的基础。
+
+
+
+## babel编译原理
+
+- babylon 将 ES6/ES7 代码解析成 AST
+- babel-traverse 对 AST 进行遍历转译，得到新的 AST
+- 新 AST 通过 babel-generator 转换成 ES5
+
+
+
+## 数组
+
+- `map`: 遍历数组，返回回调返回值组成的新数组
+- `forEach`: 无法`break`，可以用`try/catch`中`throw new Error`来停止
+- `filter`: 过滤
+- `some`: 有一项返回`true`，则整体为`true`
+- `every`: 有一项返回`false`，则整体为`false`
+- `join`: 通过指定连接符生成字符串
+- `push / pop`: 末尾推入和弹出，改变原数组， 返回推入/弹出项
+- `unshift / shift`: 头部推入和弹出，改变原数组，返回操作项
+- `sort(fn) / reverse`: 排序与反转，改变原数组
+- `concat`: 连接数组，不影响原数组， 浅拷贝
+- `slice(start, end)`: 返回截断后的新数组，不改变原数组
+- `splice(start, number, value...)`: 返回删除元素组成的数组，value 为插入项，改变原数组
+- `indexOf / lastIndexOf(value, fromIndex)`: 查找数组项，返回对应的下标
+- `reduce / reduceRight(fn(prev, cur)， defaultPrev)`: 两两执行，prev 为上次化简函数的`return`值，cur 为当前值(从第二项开始)
+- 数组乱序：
+
+```
+var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+arr.sort(function () {
+    return Math.random() - 0.5;
+});
+```
+
+- 数组拆解: flat: [1,[2,3]] --> [1, 2, 3]
+
+```
+Array.prototype.flat = function() {
+    return this.toString().split(',').map(item => +item )
+}
+```
+
