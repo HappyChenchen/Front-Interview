@@ -130,6 +130,7 @@ Function.prototype.mybind = function(context) {
   };
 };
 
+<<<<<<< HEAD
 class Mypromise {
   constructor(fn) {
     this.state = "pending";
@@ -239,3 +240,75 @@ function quick(arr) {
   }
   return quick(left).concat(current, quick(right));
 }
+
+//typeof
+function myTypeOf(obj){
+  if(obj===null)return String(obj);
+  return typeof obj==='object'?Object.prototype.toString.call(obj).slice(8,-1):typeof obj;
+}
+console.log(myTypeOf(undefined))
+
+
+//curring
+function myCurry(fn,...args){
+  let length=fn.length;
+  return function (...args2) { 
+    let newArgs=args1.concat(args2);
+    let context=this;
+    if(newArgs.length<length){
+      return myCurry(...args);
+    }else{
+      return fn.apply(context,newArgs);
+    }
+  }
+}
+
+const testArr = [
+  {
+  parentID: 0,
+  nodeID: 1
+  },
+  {
+  parentID: 1,
+  nodeID: 2
+  },
+  {
+  parentID: 1,
+  nodeID: 3
+  },
+  {
+  parentID: 2,
+  nodeID: 4
+  },
+  {
+  parentID: 2,
+  nodeID: 5
+  },
+  ]
+  
+function processArr(arr, parent) {
+    let result = [];
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].parentID == parent) {
+            let obj = {"parentID": arr[i].parentID,"nodeID": arr[i].nodeID};
+            let nextChild=[];
+            nextChild = processArr(arr, arr[i].nodeID);
+            obj.children = nextChild;
+            result.push(obj);
+        }
+    }
+    return result;
+}
+
+// console.dir(processArr(testArr,0),{depth:null})
+
+function deepclone(obj){
+  let copy =obj instanceof Array?[]:{}
+  for(let i in obj){
+    if(obj.hasOwnProperty(i)){
+      copy[i]=typeof obj[i]==='object'?deepclone(obj[i]):obj[i]
+    }
+  }
+  return copy;
+}
+

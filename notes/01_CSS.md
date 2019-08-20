@@ -8,6 +8,8 @@
 
 [front-end-interview-handbook](https://link.juejin.im/?target=https%3A%2F%2Fgithub.com%2Fyangshun%2Ffront-end-interview-handbook%2Fblob%2Fmaster%2FTranslations%2FChinese%2Fquestions%2Fcss-questions.md)
 
+
+
 ## CSS
 
 - position
@@ -48,19 +50,6 @@
 
     - br 标签清浮动
 
-* BFC:
-
-  - 生成 BFC 的条件是
-    - float 为 left|right
-    - overflow 为 hidden|auto|scroll
-    - display 为 table-cell|table-caption|inline-block|inline-flex|flex
-    - position 为 absolute|fixed
-    - 根元素
-  - 作用：为元素生成一个块级上下文，将元素包裹起来不受外部的影响
-    - 清除浮动
-    - 防止文字环绕、自适应两栏布局
-    - 阻止垂直外边距重叠
-
 * 行内元素与块级元素
 
   - display:block
@@ -71,17 +60,7 @@
     - 不能设置高度和宽度，只能设置水平的 margin 和 padding
     - 行内元素的间隙需要通过 margin-right 的负值、letter-spacing 来调整
 
-* CSS 选择器
-
-  - important 10000
-  - style 内联样式 1000
-  - id 选择器 100
-  - class 选择器 10
-  - 属性选择器 10
-  - 伪类选择器 10
-  - 标签选择器 1
-  - 伪元素选择器 1
-  - 通配符 0
+  
 
 * CSS3 的特性
 
@@ -104,8 +83,6 @@
   - 在传统的 CSS 基础上增加了大量的新的语法，编写方式，常用的函数等
   - LESS 的基础语法基本上分为：变量、混合(Mixins)、嵌套规则、运算、函数、作用域等。
   - SCSS <https://www.kaops.com/iv/1000>
-
-## 响应式布局
 
 
 
@@ -189,3 +166,139 @@
 - ```
    align-self: auto | flex-start | flex-end | center | baseline | stretch;
   ```
+
+
+
+## 盒模型
+
+页面渲染时，dom 元素所采用的 **布局模型**。可通过`box-sizing`进行设置。根据计算宽高的区域可分为：
+
+- `content-box` (W3C 标准盒模型)
+- `border-box` (IE 盒模型)
+
+
+
+## BFC:
+
+- 生成 BFC 的条件是
+  - float 为 left|right
+  - overflow 为 hidden|auto|scroll
+  - display 为 table-cell|table-caption|inline-block|inline-flex|flex
+  - position 为 absolute|fixed
+  - 根元素
+- 规则：
+  - 属于同一个 BFC 的两个相邻 Box 垂直排列
+  - 属于同一个 BFC 的两个相邻 Box 的 margin 会发生重叠
+  - BFC 中子元素的 margin box 的左边， 与包含块 (BFC) border box的左边相接触 (子元素 absolute 除外)
+  - BFC 的区域不会与 float 的元素区域重叠
+  - 计算 BFC 的高度时，浮动子元素也参与计算
+  - 文字层不会被浮动层覆盖，环绕于周围
+- 作用：为元素生成一个块级上下文，将元素包裹起来不受外部的影响
+  - 清除浮动
+  - 防止文字环绕、自适应两栏布局
+  - 阻止垂直外边距重叠
+
+
+
+## 居中：
+
+### 水平居中
+
+- 行内元素: `text-align: center`
+- 块级元素: `margin: 0 auto`
+- `absolute + transform`
+- `flex + justify-content: center`
+
+### 垂直居中
+
+- `line-height: height`
+- `absolute + transform`
+- `flex + align-items: center`
+- `table`
+
+### 水平垂直居中
+
+- `absolute + transform`
+- `flex + justify-content + align-items`
+
+
+
+
+
+## CSS 选择器
+
+- important 10000
+- style 内联样式 1000
+- id 选择器 100
+- class 选择器 10
+- 属性选择器 10
+- 伪类选择器 10
+- 标签选择器 1
+- 伪元素选择器 1
+- 通配符 0
+
+
+
+## 去除浮动影响，防止父级高度塌陷
+
+- 通过增加尾元素清除浮动
+  - `:after / <br> : clear: both`
+- 创建父级 BFC
+- 父级设置高度
+
+
+
+### link 与 @import 的区别
+
+- `link`功能较多，可以定义 RSS，定义 Rel 等作用，而`@import`只能用于加载 css
+- 当解析到`link`时，页面会同步加载所引的 css，而`@import`所引用的 css 会等到页面加载完才被加载
+- `@import`需要 IE5 以上才能使用
+- `link`可以使用 js 动态引入，`@import`不行
+
+
+
+### CSS预处理器(Sass/Less/Postcss)
+
+CSS预处理器的原理: 是将类 CSS 语言通过 **Webpack 编译** 转成浏览器可读的真正 CSS。在这层编译之上，便可以赋予 CSS 更多更强大的功能，常用功能:
+
+- 嵌套
+- 变量
+- 循环语句
+- 条件语句
+- 自动前缀
+- 单位转换
+- mixin复用
+
+
+
+## CSS动画
+
+- `transition`: 过渡动画
+  - `transition-property`: 属性
+  - `transition-duration`: 间隔
+  - `transition-timing-function`: 曲线
+  - `transition-delay`: 延迟
+  - 常用钩子: `transitionend`
+- `animation / keyframes`
+  - `animation-name`: 动画名称，对应`@keyframes`
+  - `animation-duration`: 间隔
+  - `animation-timing-function`: 曲线
+  - `animation-delay`: 延迟
+  - animation-iteration-count: 次数 
+    - `infinite`: 循环动画
+  - animation-direction: 方向 
+    - `alternate`: 反向播放
+  - animation-fill-mode: 静止模式 
+    - `forwards`: 停止时，保留最后一帧
+    - `backwards`: 停止时，回到第一帧
+    - `both`: 同时运用 `forwards / backwards`
+  - 常用钩子: `animationend`
+- 动画属性: 尽量使用动画属性进行动画，能拥有较好的性能表现
+  - `translate`
+  - `scale`
+  - `rotate`
+  - `skew`
+  - `opacity`
+  - `color`
+
+

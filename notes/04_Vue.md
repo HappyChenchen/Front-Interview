@@ -108,6 +108,8 @@ obj: 是被代理完成之后返回的对象。
 
 之所以 Vue3.0 要使用 `Proxy` 替换原本的 API 原因在于 `Proxy` 无需一层层递归为每个属性添加代理，一次即可完成以上操作，性能上更好，并且原本的实现有一些数据更新不能监听到，但是 `Proxy` 可以完美监听到任何方式的数据改变，唯一缺陷可能就是浏览器的兼容性不好了。
 
+
+
 ## Vue 生命周期
 
 - vue.init()初始化创建一个实例
@@ -120,12 +122,16 @@ obj: 是被代理完成之后返回的对象。
 - beforedestroy，销毁前的钩子，可以在这里添加销毁的确认弹框
 - destroyed，完全销毁，所有的事件监听都会被解绑，生命周期结束，子实例也会被销毁，原生的 DOM 还存在，但数据已经不能够被访问
 
+
+
 ## vue-router 的原理
 
 - vue-router 的实现依赖的是 hashChange 或 H5 的 history 模式，使得路由更新的时候，能够不重新渲染页面，更新对应的组件，具体来说：
 - 首先我们在使用的时候需要 Vue.use(vueRouter),在这一步调用的是 install 方法，在这个方法中做了三件事情，第一是安装了 vue-router 插件，第二是定义`this.$router`和`this.$route`两个变量来使得每个组件都可以访问路由列表，第三是注册了 router-view 和 router-link 两个组件，其中 router-view 就是获取到路由匹配的对应组件，render 渲染，router-link 就是注册 click 事件，触发路由的更新
 - 其次是我们在使用的时候需要新建一个 VueRouter 实例，在这一步中做了两件事情，其一是生成了路由的匹配表，将每个组件和对应的路由地址匹配好，第二是根据定义的模式生成对应的 history 实例
 - 第三部我们在使用的时候需要新建一个 Vue 实例，这一步的 beforeCreate 钩子中混入了 vue-router 的一些操作，第一是有一个 init 方法，根据不同的模式来确定路由切换的模式，然后通过 history.listen 注册路由的变化回调，第二是利用 object.defineproperty 监听当前路由地址的变化，如果变化了的话就会触发更新机制，比如 hash 模式，就是更新 hash 值，history 模式就是通过 pushState 或 replaceState 来更新路由。更新路由之后就会触发 hash 的 onHashChange 或 history 中的 popState 触发对应的组件的更新
+
+
 
 ## vuex
 
@@ -137,6 +143,8 @@ obj: 是被代理完成之后返回的对象。
   - mutation 用来提交修改
   - action 用来定义修改的逻辑
   - getter 用来过滤数据
+
+
 
 ## Vue 计算属性和侦听属性
 
