@@ -1,0 +1,49 @@
+<div class="box">
+  <ul class="box-inner">
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li>5</li>
+    <li>6</li>
+    <li>7</li>
+    <li>8</li>
+    <li>9</li>
+  </ul>
+</div>
+
+<style>
+  .box {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+  }
+
+  .box-inner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+  }
+
+  .box-inner>li {
+    background-color: blue;
+    width: calc(98% / 3);
+    height: calc(98% / 3);
+    margin-right: 1%;
+    margin-bottom: 1%;
+  }
+
+  .box-inner>li:nth-of-type(3n) {
+    margin-right: 0;
+  }
+
+  .box-inner>li:nth-of-type(n+7) {
+    margin-bottom: 0;
+  }
+</style>
