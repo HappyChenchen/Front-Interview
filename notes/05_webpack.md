@@ -1,6 +1,143 @@
+
+
+## 原理：
+
+### **核心概念**
+
+JavaScript 的 **模块打包工具****打包功能****文件处理机制**
+
+- **Entry**: 入口文件，Webpack 会从该文件开始进行分析与编译；
+- **Output**: 出口路径，打包后创建 bundler 的文件路径以及文件名；
+- **Module**: 模块，在 Webpack 中任何文件都可以作为一个模块，会根据配置的不同的 Loader 进行加载和打包；
+- **Chunk**: 代码块，可以根据配置，将所有模块代码合并成一个或多个代码块，以便按需加载，提高性能；
+- **Loader**: 模块加载器，进行各种文件类型的加载与转换；
+- **Plugin**: 拓展插件，可以通过 Webpack 相应的事件钩子，介入到打包过程中的任意环节，从而对代码按需修改；
+
+
+
+### **工作流程** (加载 - 编译 - 输出)
+
+1、读取配置文件，按命令 **初始化** 配置参数，创建 Compiler 对象；
+
+2、调用插件的 apply 方法 **挂载插件** 监听，然后从入口文件开始执行编译；
+
+3、按文件类型，调用相应的 Loader 对模块进行 **编译**，并在合适的时机点触发对应的事件，调用 Plugin 执行，最后再根据模块 **依赖查找** 到所依赖的模块，递归执行第三步；
+
+4、将编译后的所有代码包装成一个个代码块 (Chuck)， 并按依赖和配置确定 **输出内容**。这个步骤，仍然可以通过 Plugin 进行文件的修改;
+
+5、最后，根据 Output 把文件内容一一写入到指定的文件夹中，完成整个过程；
+
+
+
+### **总结**:
+
+- 模块机制: webpack 自己实现了一套模拟模块的机制，将其包裹于业务代码的外部，从而提供了一套模块机制；
+- 文件编译: webpack 规定了一套编译规则，通过 Loader 和 Plugin，以管道的形式对文件字符串进行处理；
+
+
+
+## Loader
+
+### 概念：
+
+Webpack 是基于 Node，因此 Webpack 其实是只能识别 js 模块，比如 css / html / 图片等类型的文件并无法加载，因此就需要一个对 **不同格式文件转换器**。其实 Loader 做的事，也并不难理解: **对 Webpack 传入的字符串进行按需修改**。
+
+通常是需要将代码进行分析，构建 **AST (抽象语法树)**， 遍历进行定向的修改后，再重新生成新的代码字符串。如我们常用的 Babel-loader 会执行以下步骤:
+
+- babylon 将 ES6/ES7 代码解析成 AST
+- babel-traverse 对 AST 进行遍历转译，得到新的 AST
+- 新 AST 通过 babel-generator 转换成 ES5
+
+### **Loader 特性**:
+
+- **链式传递**，按照配置时相反的顺序链式执行；
+- 基于 Node 环境，拥有 **较高权限**，比如文件的增删查改；
+- 可同步也可异步；
+
+### **常用 Loader**:
+
+- file-loader: 加载文件资源，如 字体 / 图片 等，具有移动/复制/命名等功能；
+- url-loader: 通常用于加载图片，可以将小图片直接转换为 Date Url，减少请求；
+- babel-loader: 加载 js / jsx 文件， 将 ES6 / ES7 代码转换成 ES5，抹平兼容性问题；
+- ts-loader: 加载 ts / tsx 文件，编译 TypeScript；
+- style-loader: 将 css 代码以`<style>`标签的形式插入到 html 中；
+- css-loader: 分析`@import`和`url()`，引用 css 文件与对应的资源；
+- postcss-loader: 用于 css 的兼容性处理，具有众多功能，例如 **添加前缀，单位转换** 等；
+- less-loader / sass-loader: css预处理器，在 css 中新增了许多语法，提高了开发效率；
+
+### **编写原则**:
+
+- **单一原则**: 每个 Loader 只做一件事；
+- **链式调用**: Webpack 会按顺序链式调用每个 Loader；
+- **统一原则**: 遵循 Webpack 制定的设计规则和结构，输入与输出均为字符串，各个 Loader 完全独立，即插即用；
+
+
+
+## Plugin
+
+### 概念：
+
+插件系统是 Webpack 成功的一个关键性因素。在编译的整个生命周期中，Webpack 会触发许多事件钩子，Plugin 可以监听这些事件，根据需求在相应的时间点对打包内容进行定向的修改。
+
+### **常用 Plugin**:
+
+- UglifyJsPlugin: 压缩、混淆代码；
+- CommonsChunkPlugin: 代码分割；
+- ProvidePlugin: 自动加载模块；
+- html-webpack-plugin: 加载 html 文件，并引入 css / js 文件；
+- extract-text-webpack-plugin / mini-css-extract-plugin: 抽离样式，生成 css 文件；
+- DefinePlugin: 定义全局变量；
+- optimize-css-assets-webpack-plugin: CSS 代码去重；
+- webpack-bundle-analyzer: 代码分析；
+- compression-webpack-plugin: 使用 gzip 压缩 js 和 css；
+- happypack: 使用多进程，加速代码构建；
+- EnvironmentPlugin: 定义环境变量；
+
+
+
+## 编译优化
+
+- **代码优化**:
+  - **无用代码消除**，是许多编程语言都具有的优化手段，这个过程称为 DCE (dead code elimination)，即 **删除不可能执行的代码**；
+  - **摇树优化** (Tree-shaking)，这是一种形象比喻。我们把打包后的代码比喻成一棵树，这里其实表示的就是，通过工具 "摇" 我们打包后的 js 代码，将没有使用到的无用代码 "摇" 下来 (删除)。即 消除那些被 **引用了但未被使用** 的模块代码。
+- **code-spliting**: **代码分割** 技术，将代码分割成多份进行 **懒加载** 或 **异步加载**，避免打包成一份后导致体积过大，影响页面的首屏加载；
+- **scope hoisting**: **作用域提升**，将分散的模块划分到同一个作用域中，避免了代码的重复引入，有效减少打包后的代码体积和运行时的内存损耗；
+
+**编译性能优化**:
+
+- 升级至 **最新** 版本的 webpack，能有效提升编译性能；
+- 使用 dev-server / 模块热替换 (HMR) 提升开发体验； 
+  - 监听文件变动 **忽略 node_modules** 目录能有效提高监听时的编译效率；
+- 缩小编译范围: 
+  - modules: 指定模块路径，减少递归搜索；
+  - mainFields: 指定入口文件描述字段，减少搜索；
+  - noParse: 避免对非模块化文件的加载；
+  - includes/exclude: 指定搜索范围/排除不必要的搜索范围；
+  - alias: 缓存目录，避免重复寻址；
+- babel-loader: 
+  - 忽略`node_moudles`，避免编译第三方库中已经被编译过的代码；
+  - 使用`cacheDirectory`，可以缓存编译结果，避免多次重复编译；
+- 多进程并发: 
+  - webpack-parallel-uglify-plugin: 可多进程并发压缩 js 文件，提高压缩速度；
+  - HappyPack: 多进程并发文件的 Loader 解析；
+- 第三方库模块缓存: 
+  - DLLPlugin 和 DLLReferencePlugin 可以提前进行打包并缓存，避免每次都重新编译；
+- 使用分析: 
+  - Webpack Analyse / webpack-bundle-analyzer 对打包后的文件进行分析，寻找可优化的地方；
+  - 配置`profile：true`，对各个编译阶段耗时进行监控，寻找耗时最多的地方；
+- source-map: 
+  - 开发: `cheap-module-eval-source-map`；
+  - 生产: `hidden-source-map`；
+
+
+
+
+
+
+
 ## webpack 的优势
 
-1.  webpack 是以 commonJS 的形式来书写脚本滴，但对 AMD/CMD 的支持也很全面，方便旧项目进行代码迁移。
+1.  webpack 是以 commonJS 的形式来书写脚本，但对 AMD/CMD 的支持也很全面，方便旧项目进行代码迁移。
 
 2.  能被模块化的不仅仅是 JS 了。
 
@@ -8,17 +145,23 @@
 
 4.  扩展性强，插件机制完善
 
+
+
 ## 什么是 loader，什么是 plugin
 
 loader 用于加载某些资源文件。因为 webpack 本身只能打包 common.js 规范的 js 文件，对于其他资源如 css，img 等，是没有办法加载的，这时就需要对应的 loader 将资源转化，从而进行加载。
 
 plugin 用于扩展 webpack 的功能。不同于 loader，plugin 的功能更加丰富，比如压缩打包，优化，不只局限于资源的加载。
 
+
+
 ## 什么是 bundle，什么是 chunk，什么是 module
 
 - **bundle：** 是由 webpack 打包出来的文件
 - **chunk：** 是指 webpack 在进行模块依赖分析的时候，代码分割出来的代码块
 - **module：** 是开发中的单个模块
+
+
 
 ## webpack 和 gulp 的区别？
 
@@ -27,15 +170,21 @@ webpack 是一个模块打包器，强调的是一个前端模块化方案，更
 **gulp：**
 gulp 是一个前端自动化构建工具，强调的是前端开发的工作流程，可以通过配置一系列的 task，第一 task 处理的事情（如代码压缩，合并，编译以及浏览器实时更新等）。然后定义这些执行顺序，来让 glup 执行这些 task，从而构建项目的整个开发流程。自动化构建工具并不能把所有的模块打包到一起，也不能构建不同模块之间的依赖关系。
 
+
+
 ## 什么是模热更新？有什么优点？
 
 模块热更新是 webpack 的一个功能，它可以使得代码修改之后，不用刷新浏览器就可以更新。在应用过程中替换添加删出模块，无需重新加载整个页面，是高级版的自动刷新浏览器。
 **优点：**
 只更新变更内容，以节省宝贵的开发时间。调整样式更加快速，几乎相当于在浏览器中更改样式
 
+
+
 ## webpack-dev-server 和 http 服务器的区别
 
 webpack-dev-server 使用内存来存储 webpack 开发环境下的打包文件，并且可以使用模块热更新，比传统的 http 服务对开发更加有效。
+
+
 
 ## 什么是长缓存？在 webpack 中如何做到长缓存优化？
 
@@ -43,13 +192,19 @@ webpack-dev-server 使用内存来存储 webpack 开发环境下的打包文件�
 
 在 webpack 中，可以在 output 给出输出的文件制定 chunkhash，并且分离经常更新的代码和框架代码，通过 NameModulesPlugin 或者 HashedModulesPlugin 使再次打包文件名不变。
 
+
+
 ## 什么是 Tree-sharking?CSS 可以 Tree-shaking 吗?
 
 Tree-shaking 是指在打包中去除那些引入了，但是在代码中没有被用到的那些死代码。在 webpack 中 Tree-shaking 是通过 uglifyJSPlugin 来 Tree-shakingJS。Css 需要使用 Purify-CSS。
 
+
+
 ## 如何可以自动生成 webpack 配置？
 
 webpack-cli /vue-cli /etc …脚手架工具
+
+
 
 ## webpack 打包
 
@@ -68,6 +223,8 @@ webpack-cli /vue-cli /etc …脚手架工具
 假如不走缓存的话，那么 vendor 和 main 的文件还是特别大，使用 webpack 插件 uglifyjs-webpack-plugin，来压缩 js，因为用了 ES6，所以使用 yarn 下载，压缩之后 js 文件就小了差不多 50%;
 
 当前效果比之前好了很多，但是还不是最完美的，在没有任何缓存的情况下，用户一进来主页访问消耗的流量还是很大，此时就需要用到按需加载组件，webpack 分块打包，在路由 router 中提供了一个功能，懒加载，不要需要改变任何路由配置，把所有独自默认一开始就加载的组件分块打包（除了全局下的），形成一个个封装的函数，在路由匹配需要渲染的时候才获取组件对象，在页面创建 script 标签请求回来，引入执行…
+
+
 
 ## install
 
@@ -90,6 +247,8 @@ devServer:{
         }
 ```
 
+
+
 ## entry
 
 **entry:** 用来写入口文件，它将是整个依赖关系的根
@@ -111,6 +270,8 @@ var baseConfig = {
 ```
 
 建议使用后面一种方法，因为他的规模会随你的项目增大而变得繁琐
+
+
 
 ## output
 
@@ -140,6 +301,8 @@ output: {
 ```
 
 如今这么少的配置，就能够让你运行一个服务器并在本地使用命令 npm start 或者 npm run build 来打包我们的代码进行发布
+
+
 
 ## Loader
 

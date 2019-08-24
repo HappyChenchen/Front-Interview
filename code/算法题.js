@@ -105,7 +105,7 @@ function func(v, r = "") {
   v = v.slice(0, v.length - 1);
   return func(v, r);
 }
-console.log(func(1234));
+// console.log(func(1234));
 // "4321"
 
 //将数组扁平化并去除其中重复数据，最终得到一个升序且不重复的数组
@@ -126,3 +126,67 @@ console.log(func(1234));
 // var sort = Distinct.sort((a, b) => a - b);
 
 // console.log("new arr", sort);
+
+function isPrimeNumber(v) {//判断是否为质数
+  var s = Math.floor(Math.sqrt(v));
+  for (var i = s; i > 1; i--) if (v % i == 0) return false;
+  return true;
+}
+function getPrimeNumber(min, max) {//获取指定范围内的质数集合
+  let rst = [];
+  for (let i = Math.max(2, min) ; i < max; i++) {
+    if (isPrimeNumber(i)) rst.push(i);
+  }
+  if(rst.length==0){
+    return 0
+  }else{
+    let sum1=0;
+    let sum2=0;
+    for(let i=0;i<rst.length;i++){
+      let baiwei=parseInt(rst[i]/100); 
+      let shiwei=parseInt((rst[i]%100)/10); 
+      let gewei=parseInt(rst[i]%10); 
+      sum1+=shiwei;
+      sum2+=gewei;
+    }
+    if(sum1<sum2){
+      return sum1;
+    }else{
+      return sum2;
+    }
+  }
+}
+
+// console.log(getPrimeNumber(2,20))
+
+
+function getNum (str) {
+  let dp = new Array(str.length)
+  for (let i = 0; i<str.length; i++) {
+      dp[i] || (dp[i] = [])
+      let charCode = str.charCodeAt(i)
+      // 小写字母
+      if (charCode >= 97 && charCode <= 122) {
+          if (i === 0) {
+              dp[0][0] = 1
+              dp[0][1] = 2
+              continue
+          }
+          dp[i][0] = Math.min(dp[i-1][0] + 1, dp[i-1][1] + 2)
+          dp[i][1] = Math.min(dp[i-1][0] + 2, dp[i-1][1] + 2)
+      }
+      // 大写字母
+      if (charCode >= 65 && charCode <= 90) {
+          if (i === 0) {
+              dp[0][0] = 2
+              dp[0][1] = 2
+              continue
+          }
+          dp[i][0] = Math.min(dp[i-1][0] + 2, dp[i-1][1] + 2)
+          dp[i][1] = Math.min(dp[i-1][0] + 2, dp[i-1][1] + 1)
+      }
+  }
+  return Math.min(dp[str.length-1][0], dp[str.length-1][1])
+}
+
+console.log(getNum('AaAAAA'))
