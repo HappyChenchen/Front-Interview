@@ -189,4 +189,31 @@ function getNum (str) {
   return Math.min(dp[str.length-1][0], dp[str.length-1][1])
 }
 
+function sort (arr) {
+  let obj = {}
+  let res = []
+  let result = []
+  for (let i = 0; i<arr.length; i++) {
+      let firstName = arr[i].split(" ")[0]
+      if (!obj[firstName]) {
+          obj[firstName] = 1
+      } else {
+          obj[firstName]++
+      }
+  }
+  for (let i = 0; i<arr.length; i++) {
+      let firstName = arr[i].split(" ")[0]
+      if (!res[obj[firstName]]) {
+          res[obj[firstName]] = [arr[i]]
+      } else {
+          res[obj[firstName]].push(arr[i])
+      }
+  }
+  res.reverse().forEach(arr => {
+      result = result.concat(arr)
+  })
+  return result
+}
+
+
 console.log(getNum('AaAAAA'))
