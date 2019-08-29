@@ -130,7 +130,6 @@ Function.prototype.mybind = function(context) {
   };
 };
 
-<<<<<<< HEAD
 class Mypromise {
   constructor(fn) {
     this.state = "pending";
@@ -312,3 +311,9 @@ function deepclone(obj){
   return copy;
 }
 
+function deepclone(obj){
+  let copy=obj instanceof Array?[]:{}
+  for(let i in obj){
+    
+  }
+}
