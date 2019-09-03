@@ -235,4 +235,76 @@ function flatArr(arr){
 
 
 
-console.log(flatArr([ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10]));
+// console.log(flatArr([ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10]));
+
+//美团二面准备、最长回文字符串
+function isHuiwen(str){
+  return str==str.split("").reverse().join("");
+}
+
+console.log(longestPalindrome2('adadccc'))
+
+//暴力 时间复杂度为O(n^3)，空间复杂度为O(1)。
+function longestPalindrome1(s){
+  let n=s.length;
+  let res="";
+  for (let i=0;i<n;i++){
+    for(let j=i+1;j<=n;j++){
+      let str=s.slice(i,j);
+      let f=str.split('').reverse().join("");
+      if(str==f){
+        res=str.length>res.length?str:res;
+      }
+    }
+  }
+  return res;
+}
+
+//dp 时间复杂度为O(n^2)，空间复杂度为O(n^2)。
+function longestPalindrome2(s){
+    let dp = [];
+    for(let i = 0; i < s.length; i++){
+        dp[i] = [];
+    }
+    let max = -1, str = '';
+    for(let k = 0; k < s.length; k++){
+        // k为所遍历的子串长度 - 1，即左下标到右下标的距离
+        for(let i = 0; i + k < s.length; i++){
+            let j = i + k;
+            // i为子串开始的左下标，j为子串开始的右下标
+            if(k == 0){
+                // 当子串长度为1时，必定是回文
+                dp[i][j] = true;
+            }else if(k <= 2){
+                // 当子串长度为2时，两字符相同则符合回文，长度为3，首位字符相同则符合回文
+                if(s[i] == s[j]){
+                    dp[i][j] = true;
+                }
+                else{
+                    dp[i][j] = false;
+                }
+            }else{
+                // 当子串长度超过3，取决于去掉头尾之后的子串是否回文并且首位字符是否相同
+                if(dp[i+1][j-1] && (s[i] == s[j])){
+                    dp[i][j] = true;
+                }
+                else{
+                    dp[i][j] = false;
+                }
+            }
+
+            if(dp[i][j] && k > max){
+                max = k;
+                str = s.substring(i, j + 1)
+            }
+        }
+    }
+    return str;
+}
+
+//二叉树前序遍历
+//https://blog.csdn.net/liusaint1992/article/details/80310918
+function Node(val){
+  this.left = this.right = null;
+  this.val = val;
+}

@@ -310,10 +310,3 @@ function deepclone(obj){
   }
   return copy;
 }
-
-function deepclone(obj){
-  let copy=obj instanceof Array?[]:{}
-  for(let i in obj){
-    
-  }
-}
