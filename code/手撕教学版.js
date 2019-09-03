@@ -130,7 +130,6 @@ Function.prototype.mybind = function(context) {
   };
 };
 
-<<<<<<< HEAD
 class Mypromise {
   constructor(fn) {
     this.state = "pending";
