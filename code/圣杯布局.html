@@ -1,41 +1,44 @@
-<article class="container">
-  <div class="center">
-    <h2>圣杯布局</h2>
-  </div>
-  <div class="left"></div>
-  <div class="right"></div>
-</article>
+<div class="parent" id="parent" style="background-color: lightgrey;">
+    <div class="top" style="background-color: lightblue;">
+        <p>top</p>
+    </div>  
+    <div class="middle" style="background-color: pink;">
+        <div class="left" style="background-color: orange;">
+            <p>left</p>
+        </div>
+        <div class="right" style="background-color: lightsalmon;">
+            <div class="right-in">
+                <p>right</p>
+            </div>
+        </div>
+    </div>          
+    <div class="bottom" style="background-color: lightgreen;">
+        <p>bottom</p>
+    </div>        
+</div>
 
 <style>
-  .container {
-    padding-left: 220px;
-    padding-right: 220px;
-  }
-
-  .left {
+body,p{margin: 0;}
+body,html,.parent{height: 100%;}
+.middle{
+    overflow: hidden;
+    height: calc(100% - 100px);
+}
+.left{
     float: left;
-    width: 200px;
-    height: 400px;
-    background: red;
-    margin-left: -100%;
-    position: relative;
-    left: -220px;
-  }
-
-  .center {
-    float: left;
-    width: 100%;
-    height: 500px;
-    background: yellow;
-  }
-
-  .right {
-    float: left;
-    width: 200px;
-    height: 400px;
-    background: blue;
-    margin-left: -200px;
-    position: relative;
-    right: -220px;
-  }
+    width: 100px;
+    margin-right: 20px;
+    height: 100%;
+}
+.right{
+    overflow: auto;
+    height: 100%;
+}
+.right-in{
+    height: 1000px;
+}
+.top,.bottom{height:50px;}
 </style>
+
+let o={x:{y:{z:1}}} 
+ o 'x.y.z'
