@@ -130,9 +130,11 @@ function func(v, r = "") {
 function isPrimeNumber(v) {
   //判断是否为质数
   var s = Math.floor(Math.sqrt(v));
-  for (var i = s; i > 1; i--) if (v % i == 0) return false;
+  for (var i = s; i > 1; i--)
+    if (v % i == 0) return false;
   return true;
 }
+
 function getPrimeNumber(min, max) {
   //获取指定范围内的质数集合
   let rst = [];
@@ -216,4 +218,217 @@ function sort(arr) {
   return result;
 }
 
-console.log(getNum("AaAAAA"));
+// console.log(getNum("AaAAAA"));
+
+// // console.log(getNum('AaAAAA'))
+
+function flatArr(arr) {
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      result = result.concat(...flatArr(arr[i]));
+    } else {
+      result.push(arr[i]);
+    }
+  }
+  result = [...new Set(result)];
+  return result;
+}
+
+// console.log(flatArr([ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10]));
+
+//美团二面准备、最长回文字符串
+function isHuiwen(str) {
+  return (
+    str ==
+    str
+      .split("")
+      .reverse()
+      .join("")
+  );
+}
+
+console.log(longestPalindrome2("adadccc"));
+
+//暴力 时间复杂度为O(n^3)，空间复杂度为O(1)。
+function longestPalindrome1(s) {
+  let n = s.length;
+  let res = "";
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j <= n; j++) {
+      let str = s.slice(i, j);
+      let f = str.split("").reverse().join("");
+      if (str == f) {
+        res = str.length > res.length ? str : res;
+      }
+    }
+  }
+  return res;
+}
+
+//dp 时间复杂度为O(n^2)，空间复杂度为O(n^2)。
+function longestPalindrome2(s) {
+  let dp = [];
+  for (let i = 0; i < s.length; i++) {
+    dp[i] = [];
+  }
+  let max = -1, str = "";
+  for (let k = 0; k < s.length; k++) {
+    // k为所遍历的子串长度 - 1，即左下标到右下标的距离
+    for (let i = 0; i + k < s.length; i++) {
+      let j = i + k;
+      // i为子串开始的左下标，j为子串开始的右下标
+      if (k == 0) {
+        dp[i][j] = true;// 当子串长度为1时，必定是回文
+      } else if (k <= 2) {
+        // 当子串长度为2时，两字符相同则符合回文，长度为3，首位字符相同则符合回文
+        if (s[i] == s[j]) {
+          dp[i][j] = true;
+        } else {
+          dp[i][j] = false;
+        }
+      } else {
+        // 当子串长度超过3，取决于去掉头尾之后的子串是否回文并且首位字符是否相同
+        if (dp[i + 1][j - 1] && s[i] == s[j]) {
+          dp[i][j] = true;
+        } else {
+          dp[i][j] = false;
+        }
+      }
+      console.log(i + "" + j + dp[i][j])
+      if (dp[i][j] && k > max) {
+        max = k;
+        str = s.substring(i, j + 1);
+      }
+    }
+  }
+  return str;
+}
+
+//二叉树前序遍历
+//https://blog.csdn.net/liusaint1992/article/details/80310918
+function Node(ele, left, right, parent) {
+  this.ele = ele;
+  this.left = left;
+  this.right = right;
+  this.parent = parent;
+  this.show = function () {
+    return this.ele;
+  }
+}
+
+var node4 = { left: null, right: null, val: 4 };
+var node5 = { left: null, right: null, val: 5 };
+var node6 = { left: null, right: null, val: 6 };
+var node7 = { left: null, right: null, val: 7 };
+var node3 = { left: node6, right: node7, val: 3 };
+var node2 = { left: node4, right: node5, val: 2 };
+var node1 = { left: node2, right: node3, val: 1 };
+
+
+function preorderTraversal(root, res) {
+  if (!root) {
+    return;
+  }
+  res.push(root.val)
+  if (root.left) {
+    preorderTraversal(root.left, res);
+  }
+  if (root.right) {
+    preorderTraversal(root.right, res);
+  }
+  return res;
+}
+
+function preorderTraversal1(root) {
+  if (!root) {
+    return;
+  }
+  var stack = [root];
+  var res = [];
+  while (stack.length > 0) {
+    //取第一个。
+    var item = stack.shift();
+    res.push(item.val);
+    if (item.right) {
+      stack.unshift(item.right);
+    }
+    if (item.left) {
+      stack.unshift(item.left);
+    }
+  }
+  return res;
+}
+
+console.log(preorderTraversal(node1, []));  //1 2 4 5 3 6 7 
+console.log(preorderTraversal1(node1));
+
+function inorderTraversal(root, res) {
+  if (!root) {
+    return;
+  }
+  if (root.left) {
+    inorderTraversal(root.left, res);
+  }
+  res.push(root.val);
+  if (root.right) {
+    inorderTraversal(root.right, res);
+  }
+}
+
+// inorderTraversal(node1); //4 2 5 1 6 3 7
+
+
+//先将根节点入栈，找到所有左节点入栈，直到没有左节点为止，然后出栈存入结果数组，
+//每出一个，对比该根节点的右子节点是否有左节点，若有则入栈，否则继续出栈
+function inorderTraversal1(root) {
+  var res = [];
+  //栈  
+  var s = [];
+  var p = root;
+  while (p || s.length > 0) {
+    //直至左节点为空，即没有左节点为止
+    while (p) {
+      s.push(p);
+      p = p.left;
+    }
+    //出栈，存放根节点
+    p = s.pop();
+    res.push(p.val);
+    p = p.right;
+  }
+  return res;
+}
+
+// console.log(inorderTraversal1(node1)); //4 2 5 1 6 3 7
+
+//层次遍历
+function levelOrder(root) {
+  if (!root) {
+    return
+  }
+  var checkArr = [root];
+  var result = [];
+  while (checkArr.length > 0) {
+    var newCheckArr = [];
+    for (let i = 0; i < checkArr.length; i++) {
+      var item = checkArr[i];
+      result.push(item.val);
+      if (item.left) {
+        newCheckArr.push(item.left)
+      }
+      if (item.right) {
+        newCheckArr.push(item.right)
+      }
+    }
+    checkArr = newCheckArr;
+  }
+  return result;
+}
+
+console.log(levelOrder(node1))
+
+function unique5(arr) {
+  var x = new Set(arr);
+  return [...x];
+}

@@ -310,4 +310,3 @@ function deepclone(obj){
   }
   return copy;
 }
-
