@@ -478,4 +478,51 @@ function getMaxSubStr(str1, str2) {
   }
   return str_out.length
 }
-  console.log(getMaxSubStr('abcd', 'abdde'));
+//   console.log(getMaxSubStr('abcd', 'abdde'));
+
+
+function divide(str1, str2) {
+    let arr = new Array(256).fill(0)
+    for (let i = 0; i < str1.length; i++) {
+        if (!arr[str1.charCodeAt(i)]) {
+            arr[str1.charCodeAt(i)] = 0
+        } 
+        arr[str1.charCodeAt(i)]++
+    }
+    for (let i = 0; i < str2.length; i++) {
+        if (!arr[str2.charCodeAt(i)]) {
+            arr[str2.charCodeAt(i)] = 0
+        } 
+        arr[str2.charCodeAt(i)]--
+    }
+    for (let item of arr) {
+        if (item) {
+            return false
+        }
+    }
+    return true
+}
+
+
+var levelOrderBottom = function(root) {
+    var queue = [];
+    var result = [];
+    if (root !== null) {
+      queue.push(root);
+    }
+    while(queue.length !== 0) {
+      var level = [];
+      var len = queue.length;
+      for (var i = 0; i < len; i ++) {
+        var currentNode = queue.shift();
+        level.push(currentNode.val);
+        if (currentNode.left !== null) queue.push(currentNode.left);
+        if (currentNode.right !== null) queue.push(currentNode.right);
+      }
+      result.push(level);
+    }
+    return result.reverse();
+  };
+
+
+console.log(levelOrderBottom([3,9,20,null,null,15,7]))

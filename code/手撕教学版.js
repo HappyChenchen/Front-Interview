@@ -171,6 +171,7 @@ class Mypromise {
 function binary_search1(arr, key) {
   var low = 0;
   var high = arr.length - 1;
+  var bijia=0;
   while (low <= high) {
     var mid = parseInt((high + low) / 2);
     if (key == arr[mid]) {
@@ -180,12 +181,13 @@ function binary_search1(arr, key) {
     } else if (key < arr[mid]) {
       high = mid - 1;
     }
+    bijia++;
   }
-  return -1;
+  return bijia++;
 }
 
-var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 44, 86];
-var result = binary_search1(arr, 100);
+var arr = [2, 5, 7, 10, 14.15,18,23,35,41,52];
+var result = binary_search1(arr, 12);
 console.log(result); // 9 返回目标元素的索引值
 
 //二分 非递归

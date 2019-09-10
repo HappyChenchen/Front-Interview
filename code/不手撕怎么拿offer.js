@@ -37,4 +37,36 @@ function BubbleSort(arr) {
   return arr;
 }
 
-console.log(BubbleSort([1, 4, 3, 5, 6, 7]));
+function sat(){
+  console.log(name);
+  console.log(age);
+  var name='hhh';
+  let age=12;
+}
+
+// setTimeout(function () {
+//   console.log(1)
+//   },0)
+
+//   new Promise(function(resolve){
+//     console.log(2);
+//     resolve();
+//     console.log(3);
+//   }).then(function(){
+//     console.log(4);
+//   })
+//   console.log(5)
+
+function getXOR(l, r) {
+  let res = l
+  if (l === r) {
+      return 0
+  }
+  for (let i = l+1; i <= r; i++) {
+      res ^= i
+  }
+  return res;
+}
+
+
+console.log(getXOR(2,4))

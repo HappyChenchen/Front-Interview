@@ -1,44 +1,43 @@
-// let sleep = function(timeout) {
-//   return new Promise((resolve, reject) => {
-//     setTimeout(() => {
-//       resolve(true);
-//     }, timeout);
-//   });
-// };
-// // pending resolved rejected
-// // promise是回调函数的语法糖
-// // async 是generator的语法糖
+let sleep = function(timeout) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(true);
+    }, timeout);
+  });
+};
+//  pending resolved rejected
+//  promise是回调函数的语法糖
+//  async 是generator的语法糖
 
-// // 回调地狱
-// // 链式操作
-// // 异步代码看上去更像同步代码
+//  回调地狱
+//  链式操作
+//  异步代码看上去更像同步代码
 
-// // 父promise
-// // then调用父promise的resolve
-// //
-// // Promise.race和Promise.all
+//  父promise
+//  then调用父promise的resolve
+//  Promise.race和Promise.all
 
-// async function myStep() {
-//   await sleep(1000);
-//   sleep(4000);
-//   console.log("aa");
-//   console.timeEnd("test");
-// }
+async function myStep() {
+  await sleep(1000);
+  sleep(4000);
+  console.log("aa");
+  console.timeEnd("test");
+}
 
-// console.time("test");
-// myStep();
-// // Promise.resolve(1).then(res => console.log(res)).then(res => console.log(res))
-// function myRace(arr) {
-//   return new Promise((resolve, reject) => {
-//     arr.forEach(element => {
-//       element
-//         .then(res => {
-//           resolve(res);
-//         })
-//         .catch(res => reject(res));
-//     });
-//   });
-// }
+console.time("test");
+myStep();
+// Promise.resolve(1).then(res => console.log(res)).then(res => console.log(res))
+function myRace(arr) {
+  return new Promise((resolve, reject) => {
+    arr.forEach(element => {
+      element
+        .then(res => {
+          resolve(res);
+        })
+        .catch(res => reject(res));
+    });
+  });
+}
 
 var text = "AaAAAA";
 function goodCount(str) {

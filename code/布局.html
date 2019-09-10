@@ -6,21 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
     <style>
-      body {
-        margin: 0;
-        height: 2000px;
+      .flex {
+        display:flex;
+        width:200px;
+        height:100px;
       }
-      #test {
-        height: 200px;
-        width: 200px;
-        background-color: red;
-        position: absolute;
-        top: 10px;
+      .left {
+        flex:3 2 50px;
+        background:red
+      }
+      .right{
+flex:2 1 200px;
+        background:blue
       }
     </style>
   </head>
   <body>
-    <div id="test"></div>
+    <div class='flex'>
+      <div class='left'></div>
+      <div class='right'></div>
+    </div>
+    <img src="../notes/img/http.png"  alt="首页" />
   </body>
   <script>
     var test = document.getElementById("test");
