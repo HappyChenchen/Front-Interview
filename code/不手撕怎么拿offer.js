@@ -56,17 +56,58 @@ function sat(){
 //     console.log(4);
 //   })
 //   console.log(5)
+let name='outer'
+function getXOR() {
+  console.log(name)
+  let name='inner'
+}
+name='uoda'
+getXOR();
 
-function getXOR(l, r) {
-  let res = l
-  if (l === r) {
-      return 0
-  }
-  for (let i = l+1; i <= r; i++) {
-      res ^= i
-  }
-  return res;
+console.log(Number.MAX_VALUE>0,Number.MIN_VALUE<0)
+
+let map = []
+let n = +readline()
+map.push(readline().split(' ').map(str => Number(str)).filter(num => num!==0))
+for(let i=0; i < map.length; i++) {
+    let line = map[i]
+    let newLine = []    
+    let j = 0
+    while (j < line.length) {
+        if (line[j] === line[j+1]) {
+            newLine.push(line[j] * 2)
+            j = j+2
+        } else {
+            newLine.push(line[j])
+            j++
+        }
+    }
+    map[i] = newLine
 }
 
+map.forEach(line => {
+    while (line.length < n) {
+        line.push(0)
+    } 
+    print(line.join(' '))
+})
 
-console.log(getXOR(2,4))
+if (arr.length <= 1) {
+  return 0
+}
+let min = arr[0]
+let minIndex = 0
+let count = 0
+for (let i = 1; i < arr.length; i++) {
+  if (arr[i] < min) {
+      min = arr[i]
+      minIndex = i
+  }
+}
+if(minIndex === 0) {
+  return getCount(arr.slice(1))
+} else {
+  let res = arr.slice(1)
+  res[minIndex - 1] = arr[0]
+  return 1 + getCount(res)
+}

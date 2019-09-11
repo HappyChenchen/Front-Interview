@@ -6,27 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
     <style>
-      .flex {
-        display:flex;
-        width:200px;
-        height:100px;
+      .a .d {
+        color:green
       }
-      .left {
-        flex:3 2 50px;
-        background:red
+      p.d {
+       color:yellow
       }
-      .right{
-flex:2 1 200px;
-        background:blue
+       .a.b p.d {
+        color:red
+      }
+       .a p.d {
+        color:black
       }
     </style>
   </head>
   <body>
-    <div class='flex'>
-      <div class='left'></div>
-      <div class='right'></div>
-    </div>
-    <img src="../notes/img/http.png"  alt="首页" />
+    <div class='a b c'>
+    <p class='d'>test</p></div>
   </body>
   <script>
     var test = document.getElementById("test");
