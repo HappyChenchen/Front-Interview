@@ -111,3 +111,21 @@ if(minIndex === 0) {
   res[minIndex - 1] = arr[0]
   return 1 + getCount(res)
 }
+if (arr.length <= 1) {
+  return 0
+}
+let max = arr[0]
+let maxIndex = 0
+for (let i = 1; i < arr.length; i++) {
+  if (arr[i] > max) {
+      max = arr[i]
+      maxIndex = i
+  }
+}
+if(maxIndex === 0) {
+  return getBCount(arr.slice(1))
+} else {
+  let res = arr.slice(1)
+  res[maxIndex - 1] = arr[0]
+  return 1 + getBCount(res)
+}
