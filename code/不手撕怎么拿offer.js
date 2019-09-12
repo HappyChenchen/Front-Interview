@@ -56,76 +56,21 @@ function sat(){
 //     console.log(4);
 //   })
 //   console.log(5)
-let name='outer'
-function getXOR() {
-  console.log(name)
-  let name='inner'
-}
-name='uoda'
-getXOR();
 
-console.log(Number.MAX_VALUE>0,Number.MIN_VALUE<0)
 
-let map = []
-let n = +readline()
-map.push(readline().split(' ').map(str => Number(str)).filter(num => num!==0))
-for(let i=0; i < map.length; i++) {
-    let line = map[i]
-    let newLine = []    
-    let j = 0
-    while (j < line.length) {
-        if (line[j] === line[j+1]) {
-            newLine.push(line[j] * 2)
-            j = j+2
-        } else {
-            newLine.push(line[j])
-            j++
-        }
-    }
-    map[i] = newLine
+function insidePolygon(points, testPoint){  
+  var x = testPoint[0], y = testPoint[1]; 
+  var inside = false;  
+  for (var i = 0, j = points.length - 1; i < points.length; j = i++) {  
+      var xi = points[i][0], yi = points[i][1];  
+      var xj = points[j][0], yj = points[j][1];  
+     
+      var intersect = ((yi > y) != (yj > y))  
+              && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);  
+              console.log(intersect)
+      if (intersect) inside = !inside;  
+  }  
+  return inside;  
 }
-
-map.forEach(line => {
-    while (line.length < n) {
-        line.push(0)
-    } 
-    print(line.join(' '))
-})
-
-if (arr.length <= 1) {
-  return 0
-}
-let min = arr[0]
-let minIndex = 0
-let count = 0
-for (let i = 1; i < arr.length; i++) {
-  if (arr[i] < min) {
-      min = arr[i]
-      minIndex = i
-  }
-}
-if(minIndex === 0) {
-  return getCount(arr.slice(1))
-} else {
-  let res = arr.slice(1)
-  res[minIndex - 1] = arr[0]
-  return 1 + getCount(res)
-}
-if (arr.length <= 1) {
-  return 0
-}
-let max = arr[0]
-let maxIndex = 0
-for (let i = 1; i < arr.length; i++) {
-  if (arr[i] > max) {
-      max = arr[i]
-      maxIndex = i
-  }
-}
-if(maxIndex === 0) {
-  return getBCount(arr.slice(1))
-} else {
-  let res = arr.slice(1)
-  res[maxIndex - 1] = arr[0]
-  return 1 + getBCount(res)
-}
+console.log(insidePolygon([[0,0],[2,0],[1,2],[0,2]],[1,1.5]))
+console.log(insidePolygon([[2,1],[0,0],[2,0],[1,1],[1,2],[0,2]],[1,1.5]))
