@@ -1,33 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
-    <style>
-      .a .d {
-        color:green
-      }
-      p.d {
-       color:yellow
-      }
-       .a.b p.d {
-        color:red
-      }
-       .a p.d {
-        color:black
-      }
-    </style>
-  </head>
-  <body>
-    <div class='a b c'>
-    <p class='d'>test</p></div>
-  </body>
-  <script>
-    var test = document.getElementById("test");
-    window.onscroll = function(e) {
-      test.style.top = document.documentElement.scrollTop + 10 + "px";
-    };
-  </script>
-</html>
+
+<body onload="closeWindow();">  
+<div id="show">  
+    倒计时10秒后关闭当前窗口  
+</div>
+
+<script>
+    var time=10;  
+    function showTime(){  
+    t -= 1;  
+    document.getElementById('showtimes').innerHTML= t;  
+    if(t==0){  
+        location.href='error404.asp';  
+    }  
+    //每秒执行一次,showTime()  
+    setTimeout("showTime()",1000);  
+} 
+</script>

@@ -37,8 +37,10 @@ function mybind(context) {
 
 //new
 function objectFactory(fun) {
-  return function() {
-    let obj = { _proto_: fun.prototype };
+  return function () {
+    let obj = {
+      _proto_: fun.prototype
+    };
     fun.call(obj, ...arguments);
     return obj;
   };
@@ -80,7 +82,7 @@ function inherit(Target, Origin) {
 //防抖
 function debounce(fn, delay) {
   let timer = null;
-  return function() {
+  return function () {
     let context = this;
     let args = arguments;
     clearTimeout(timer);
@@ -91,7 +93,7 @@ function debounce(fn, delay) {
 //节流
 function throttle(fn, delay) {
   let prev = Date.now();
-  return function() {
+  return function () {
     let context = this;
     let args = arguments;
     let now = Date.now();
@@ -105,8 +107,14 @@ function throttle(fn, delay) {
 //函数柯里化
 
 //浅拷贝
-let copy1 = { ...{ x: 1 } };
-let copy2 = Object.assign({}, { x: 1 });
+let copy1 = {
+  ...{
+    x: 1
+  }
+};
+let copy2 = Object.assign({}, {
+  x: 1
+});
 
 //深拷贝
 
@@ -159,3 +167,21 @@ function promiseAll(promises) {
     }
   });
 }
+
+//图片url,坐标，裁剪宽高度，图片格式（png等）
+function getUrlBase64(url, x, y, width, height, form) {
+  var canvas = document.createElement("canvas");
+  var ctx = canvas.getContext("2d");
+  var img = new Image;
+  img.crossOrigin = 'Anonymous';
+  img.src = url;
+  img.onload = function () {
+    canvas.height = height;
+    canvas.width = width;
+    ctx.drawImage(img, x, y, width, height);
+    var dataURL = canvas.toDataURL("image/" + form);
+    console.log(dataURL);
+  };
+}
+
+console.log(getUrlBase64('https://www.baidu.com/img/bd_logo1.png', 120, 130, 240, 350, 'png'))
